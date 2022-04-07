@@ -1,5 +1,6 @@
-import { Burger, createStyles, Divider, Header, HeaderProps, MediaQuery, Menu, Text, useMantineTheme } from '@mantine/core';
-import { Heart, Logout, Message, PlayerPause, Settings, Star, SwitchHorizontal, Trash } from 'tabler-icons-react';
+import { Avatar, Burger, createStyles, Divider, Group, Header, HeaderProps, MediaQuery, Menu, Text, UnstyledButton, useMantineTheme } from '@mantine/core';
+import { Link } from 'remix';
+import { ChevronDown, Logout, Settings } from 'tabler-icons-react';
 
 import { ToggleColorSchemeIcon } from '~/components/ToggleColorScheme';
 
@@ -28,6 +29,14 @@ const AdminHeader = (props: Omit<HeaderProps, 'children'>) => {
 
   const { classes } = useStyles();
 
+  const site = {
+    title: '管理界面'
+  };
+
+  const user = {
+    name: 'Yandif',
+  };
+
   return (
     <Header {...props} p="md">
 
@@ -43,43 +52,37 @@ const AdminHeader = (props: Omit<HeaderProps, 'children'>) => {
           />
         </MediaQuery>
 
-        <Text mr={20} className={classes.text}>应用</Text>
+        <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+          <Text ml={20} sx={{ display: 'flex' }} size="lg" className={classes.text}>
+            {site?.title}
+          </Text>
+        </MediaQuery>
 
         <Menu
-          size={260}
+          size={150}
           placement="end"
           transition="pop-top-right"
+          trigger="hover"
+          delay={200}
           control={
-            <div style={{ display: 'flex' }}>
-              <ToggleColorSchemeIcon mr="md" />
-              <Text mr={20} className={classes.text}>
-                Yandif
-              </Text>
-            </div>
+            <UnstyledButton>
+              <Group spacing={7}>
+                <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                  <Avatar size={30} radius='xl' color="cyan"  >{user?.name?.charAt(0)}</Avatar>
+                </MediaQuery>
+                <Text weight={500} size="sm" mr={3} className={classes.text}>
+                  {user?.name}
+                </Text>
+                <ChevronDown size={12} />
+              </Group>
+            </UnstyledButton>
           }
         >
-          <Menu.Item icon={<Heart size={14} color={theme.colors.red[6]} />}>
-            Liked posts
-          </Menu.Item>
-          <Menu.Item icon={<Star size={14} color={theme.colors.yellow[6]} />}>
-            Saved posts
-          </Menu.Item>
-          <Menu.Item icon={<Message size={14} color={theme.colors.blue[6]} />}>
-            Your comments
-          </Menu.Item>
-
-          <Menu.Label>Settings</Menu.Label>
-          <Menu.Item icon={<Settings size={14} />}>Account settings</Menu.Item>
-          <Menu.Item icon={<SwitchHorizontal size={14} />}>Change account</Menu.Item>
-          <Menu.Item icon={<Logout size={14} />}>Logout</Menu.Item>
-
+          <Menu.Label><ToggleColorSchemeIcon ml={10} /></Menu.Label>
           <Divider />
-
-          <Menu.Label>Danger zone</Menu.Label>
-          <Menu.Item icon={<PlayerPause size={14} />}>Pause subscription</Menu.Item>
-          <Menu.Item color="red" icon={<Trash size={14} />}>
-            Delete account
-          </Menu.Item>
+          <Menu.Label>设置</Menu.Label>
+          <Menu.Item icon={<Settings size={14} />}>个人中心</Menu.Item>
+          <Menu.Item component={Link} to="/logout" icon={<Logout size={14} />}>登出</Menu.Item>
         </Menu>
       </div>
 

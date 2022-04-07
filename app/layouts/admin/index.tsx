@@ -1,4 +1,4 @@
-import { AppShell, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import { AppShell, ColorSchemeProvider, MantineProvider, Paper, ScrollArea } from '@mantine/core';
 import { Outlet } from 'remix';
 
 import AdminHeader from './header';
@@ -13,15 +13,21 @@ export default function AdminLayout() {
       <MantineProvider theme={{ colorScheme }}>
         <AppShell
           navbarOffsetBreakpoint="sm"
-          fixed
           navbar={(
             <AdminNavbar />
           )}
-          header={(
-            <AdminHeader height={70} />
-          )}
+          header={<AdminHeader height={56} />}
+          sx={{ '.mantine-AppShell-main': { padding: 0 } }}
         >
-          <Outlet />
+
+          <Paper radius={0} component={ScrollArea}
+            style={{
+              height: 'calc(100vh - 56px)',
+              padding: '0 16px'
+            }}
+          >
+            <Outlet />
+          </Paper>
         </AppShell>
       </MantineProvider>
     </ColorSchemeProvider>
