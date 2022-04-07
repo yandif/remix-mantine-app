@@ -28,6 +28,7 @@
       { "max": 1, "maxEOF": 1, "maxBOF": 0 }
     ],
     "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error"
+    "simple-import-sort/exports": "error",
+    "react-hooks/exhaustive-deps": "off"
   }
 }
