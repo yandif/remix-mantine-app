@@ -6,7 +6,8 @@ import {
   Notes, Tags
 } from 'tabler-icons-react';
 
-import useStore from '../stroe';
+import { useThemeStore } from '~/stores';
+
 import { LinksGroup } from './NavbarLinksGroup';
 
 const mockdata = [
@@ -46,7 +47,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const AdminNavbar = (props: Omit<NavbarProps, 'children'>) => {
-  const { opened } = useStore();
+  const { opened } = useThemeStore();
   const { classes } = useStyles();
   const links = mockdata.map((item) => <LinksGroup  {...item} key={item.label} base="/admin" />);
 

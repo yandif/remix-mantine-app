@@ -2,7 +2,7 @@ import { createStyles, MediaQuery, ThemeIcon } from '@mantine/core';
 import { FC } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
 
-import useStore from '../stroe';
+import { useThemeStore } from '~/stores';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -28,7 +28,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const NavbarTrigger: FC = () => {
-  const { opened, toggle } = useStore();
+  const { opened, toggle } = useThemeStore();
   const { classes } = useStyles();
 
   return (

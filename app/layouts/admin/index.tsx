@@ -1,12 +1,13 @@
 import { AppShell, ColorSchemeProvider, MantineProvider, Paper, ScrollArea } from '@mantine/core';
 import { Outlet } from 'remix';
 
+import { useThemeStore } from '~/stores';
+
 import AdminHeader from './header';
 import AdminNavbar from './navbar';
-import useStore from './stroe';
 
 export default function AdminLayout() {
-  const { colorScheme, toggleColorScheme } = useStore();
+  const { colorScheme, toggleColorScheme } = useThemeStore();
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

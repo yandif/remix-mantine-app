@@ -2,10 +2,10 @@ import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { FC } from 'react';
 import { Outlet } from 'remix';
 
-import useStore from '../admin/stroe';
+import { useThemeStore } from '~/stores';
 
 const ToolLayout: FC = () => {
-  const { colorScheme, toggleColorScheme } = useStore();
+  const { colorScheme, toggleColorScheme } = useThemeStore();
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

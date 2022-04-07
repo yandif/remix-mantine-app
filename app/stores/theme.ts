@@ -8,7 +8,7 @@ type AdminLayoutState = {
   toggleColorScheme: () => void;
 };
 
-const useStore = create<AdminLayoutState>((set) => ({
+const useThemeStore = create<AdminLayoutState>((set) => ({
   opened: false,
   colorScheme: 'light',
   toggle: () => set((state) => ({ opened: !state.opened })),
@@ -18,4 +18,4 @@ const useStore = create<AdminLayoutState>((set) => ({
     })),
 }));
 
-export default useStore;
+export default useThemeStore;

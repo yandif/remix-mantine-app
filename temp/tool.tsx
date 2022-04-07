@@ -1,4 +1,4 @@
-import ToolLayout from '~/layouts/tool';
+import ToolLayout from '@/temp/tool';
 
 const ToolLayoutWrapper = () => {
   return <ToolLayout />;

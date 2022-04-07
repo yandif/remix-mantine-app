@@ -3,8 +3,7 @@ import { Link } from 'remix';
 import { ChevronDown, Logout, Settings } from 'tabler-icons-react';
 
 import { ToggleColorSchemeIcon } from '~/components/ToggleColorScheme';
-
-import useStore from '../stroe';
+import { useThemeStore } from '~/stores';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
@@ -23,7 +22,7 @@ const useStyles = createStyles((theme) => {
 });
 
 const AdminHeader = (props: Omit<HeaderProps, 'children'>) => {
-  const { opened, toggle } = useStore();
+  const { opened, toggle } = useThemeStore();
 
   const theme = useMantineTheme();
 
