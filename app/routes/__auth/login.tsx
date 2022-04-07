@@ -4,10 +4,12 @@ import { showNotification } from '@mantine/notifications';
 import { useEffect, useRef } from 'react';
 import { ActionFunction, Form, json, LoaderFunction, useActionData } from 'remix';
 
-import { authenticator } from '~/services/auth.server';
+import { authenticator } from '~/services/auth/auth.server';
+import { useThemeStore } from '~/stores';
 
 export default function Screen() {
   const actionData = useActionData();
+  const { colorScheme, setColorScheme } = useThemeStore();
   type FormData = { username?: string; password?: string, termsOfService?: boolean };
   const ref = useRef<HTMLFormElement>(null);
 
@@ -29,6 +31,7 @@ export default function Screen() {
 
   useEffect(() => {
     if (actionData?.failed) {
+      setColorScheme(actionData.themeColor);
       form?.validate();
     }
   }, []);
@@ -55,6 +58,7 @@ export default function Screen() {
         <h2>登录</h2>
       </Center>
       <Form ref={ref} method='post'>
+        <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
         <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
         <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
         <Group position="apart" mt="md">

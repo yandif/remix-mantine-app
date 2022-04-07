@@ -1,22 +1,13 @@
-import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
-import { NotificationsProvider } from '@mantine/notifications';
-import { FC } from 'react';
 import { Outlet } from 'remix';
 
-import useStore from '~/layouts/admin/stroe';
+import MantineProvider from '~/components/MantineProvider';
 
-const Root: FC = () => {
-  const { colorScheme, toggleColorScheme } = useStore();
-
+const Auth = () => {
   return (
-    <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-      <MantineProvider theme={{ colorScheme }}>
-        <NotificationsProvider>
-          <Outlet />
-        </NotificationsProvider>
-      </MantineProvider>
-    </ColorSchemeProvider>
+    <MantineProvider>
+      <Outlet />
+    </MantineProvider>
   );
 };
 
-export default Root;
+export default Auth;
