@@ -16,14 +16,12 @@ export class FormStrategy<User> extends Strategy<User, Params> {
   ): Promise<User> {
     const form = await request.formData();
 
-    let user: User;
-    try {
-      user = await this.verify({ form, context: options.context });
-    } catch (error) {
-      const message = (error as Error).message;
-      return await this.failure(message, request, sessionStorage, options);
+    const data: { failed: boolean; data: User; message?: string } =
+      (await this.verify({ form, context: options.context })) as any;
+    if (data?.failed) {
+      return data as any;
+    } else {
+      return this.success(data.data, request, sessionStorage, options);
     }
-
-    return this.success(user, request, sessionStorage, options);
   }
 }
