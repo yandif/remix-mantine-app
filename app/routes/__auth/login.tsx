@@ -1,4 +1,4 @@
-import { Box, Button, Center, Group, PasswordInput, TextInput } from '@mantine/core';
+import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
 import { ActionFunction, Form, json, Link, LoaderFunction, useActionData } from 'remix';
@@ -45,27 +45,28 @@ export default function Login() {
   };
 
   return (
-    <Box sx={{ maxWidth: 340 }} mx="auto" mt={100}>
-      <Center>
-        <h1>登录</h1>
-      </Center>
+    <Paper style={{ height: '100vh' }}>
+      <Box sx={{ maxWidth: 340 }} mx="auto" pt={100}>
+        <Center>
+          <h1>登录</h1>
+        </Center>
 
-      <Form ref={ref} method='post'>
-        <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
-        <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
-        <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
-        <Group position="apart" mt="md">
-          <Link style={{ textDecoration: 'none', color: '#777' }} to="/signup">
-            还没有账号？去注册
-          </Link>
+        <Form ref={ref} method='post'>
+          <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
+          <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
+          <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
+          <Group position="apart" mt="md">
+            <Link style={{ textDecoration: 'none', color: '#777' }} to="/signup">
+              还没有账号？去注册
+            </Link>
 
-          <Button onClick={handleSubmit}>确定</Button>
-        </Group>
-      </Form>
+            <Button onClick={handleSubmit}>确定</Button>
+          </Group>
+        </Form>
 
-    </Box >
+      </Box >
+    </Paper>
   );
-
 }
 
 export const action: ActionFunction = async ({ request }) => {

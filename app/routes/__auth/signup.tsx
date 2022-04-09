@@ -1,4 +1,4 @@
-import { Box, Button, Center, Group, PasswordInput, TextInput } from '@mantine/core';
+import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { useEffect, useRef } from 'react';
@@ -62,28 +62,30 @@ export default function Signup() {
   };
 
   return (
-    <Box sx={{ maxWidth: 340 }} mx="auto" mt={100}>
-      <Center>
-        <h1>注册</h1>
+    <Paper style={{ height: '100vh' }}>
+      <Box sx={{ maxWidth: 340 }} mx="auto" pt={100}>
+        <Center>
+          <h1>注册</h1>
 
-      </Center>
+        </Center>
 
-      <Form ref={ref} method='post'>
-        <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
-        <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
-        <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
-        <PasswordInput mt="md" label="确认密码" name="rePassword" {...form.getInputProps('rePassword')} />
-        <Group position="apart" mt="md">
+        <Form ref={ref} method='post'>
+          <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
+          <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
+          <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
+          <PasswordInput mt="md" label="确认密码" name="rePassword" {...form.getInputProps('rePassword')} />
+          <Group position="apart" mt="md">
 
-          <Link style={{ textDecoration: 'none', color: '#777' }} to="/login">
-            已有账号？去登录
-          </Link>
+            <Link style={{ textDecoration: 'none', color: '#777' }} to="/login">
+              已有账号？去登录
+            </Link>
 
-          <Button onClick={handleSubmit}>确定</Button>
-        </Group>
-      </Form>
+            <Button onClick={handleSubmit}>确定</Button>
+          </Group>
+        </Form>
 
-    </Box >
+      </Box >
+    </Paper>
   );
 
 }
