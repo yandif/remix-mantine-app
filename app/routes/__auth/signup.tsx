@@ -21,7 +21,7 @@ export default function Signup() {
       username: (value?: string) => {
         if (!value) return '请输入邮箱';
         if (!/^\S+@\S+$/.test(value)) return '无效邮箱';
-        if (value === actionData?.errorData?.username) return '用户名已存在';
+        if (value === actionData?.errorData?.username) return '邮箱已存在';
       },
       password: (value?: string) => {
         if (!value) return '请输入密码';
@@ -42,6 +42,7 @@ export default function Signup() {
     if (actionData?.signupSuccess) {
       setTimeout(() => {
         showNotification({
+          autoClose: 2000,
           title: '注册成功',
           message: '已注册成功，请进行登录',
           color: 'green'
@@ -98,7 +99,7 @@ export const action: ActionFunction = async ({ request }) => {
     rePassword: password,
   };
   if (username) {
-    const findUser = await db.user.findFirst({
+    const findUser = await db.account.findFirst({
       where: {
         username,
       }
@@ -115,7 +116,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     const md5pwd = auth.makePassword(password);
 
-    await db.user.create({
+    await db.account.create({
       data: {
         username,
         passwordHash: md5pwd

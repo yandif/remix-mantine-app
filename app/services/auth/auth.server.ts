@@ -1,10 +1,10 @@
+import _ from 'lodash';
 import { Authenticator } from 'remix-auth';
 
 import { sessionStorage } from '~/services/auth/session.server';
 import { db } from '~/utils/db.server';
 import { FormStrategy } from '~/utils/strategy.server';
 import { auth } from '~/utils/tool';
-
 export const authenticator = new Authenticator<any>(sessionStorage);
 
 authenticator.use(
@@ -20,7 +20,7 @@ authenticator.use(
       themeColor,
     });
 
-    const findUser = await db.user.findUnique({
+    const findUser = await db.account.findUnique({
       where: {
         username,
       },
@@ -38,7 +38,7 @@ authenticator.use(
 
     return {
       failed: false,
-      data: findUser,
+      data: _.omit(findUser, 'passwordHash'),
       themeColor,
     };
   }),

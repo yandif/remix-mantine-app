@@ -18,7 +18,7 @@ export default function Login() {
       username: (value?: string) => {
         if (!value) return '请输入邮箱';
         if (!/^\S+@\S+$/.test(value)) return '无效邮箱';
-        if (value === actionData?.errorData?.username) return '用户名不存在';
+        if (value === actionData?.errorData?.username) return '邮箱不存在';
       },
       password: (value?: string) => {
         if (!value) return '请输入密码';

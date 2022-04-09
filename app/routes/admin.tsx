@@ -8,9 +8,10 @@ const AdminLayoutWrapper = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
+  const user = await authenticator.isAuthenticated(request, {
     failureRedirect: '/login',
   });
+  return user;
 };
 
 export default AdminLayoutWrapper;
