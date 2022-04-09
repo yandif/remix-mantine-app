@@ -60,7 +60,7 @@ export default function Login() {
               还没有账号？去注册
             </Link>
 
-            <Button onClick={handleSubmit}>确定</Button>
+            <Button onClick={handleSubmit}>登录</Button>
           </Group>
         </Form>
 

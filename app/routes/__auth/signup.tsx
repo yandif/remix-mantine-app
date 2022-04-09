@@ -80,7 +80,7 @@ export default function Signup() {
               已有账号？去登录
             </Link>
 
-            <Button onClick={handleSubmit}>确定</Button>
+            <Button onClick={handleSubmit}>注册</Button>
           </Group>
         </Form>
 
