@@ -1,8 +1,6 @@
 // app/services/session.server.ts
 import { createCookieSessionStorage } from 'remix';
 
-console.log(process.env.NODE_ENV);
-
 // 导出整个 sessionStorage 对象
 export const sessionStorage = createCookieSessionStorage({
   cookie: {

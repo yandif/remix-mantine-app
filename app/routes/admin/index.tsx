@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 
 const Admin: FC = () => {
   useEffect(() => {
-    console.log(123123);
+
   }, []);
   return <h1>
 
