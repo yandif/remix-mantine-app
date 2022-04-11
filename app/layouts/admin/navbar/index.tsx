@@ -58,7 +58,7 @@ const AdminNavbar = (props: Omit<NavbarProps, 'children'>) => {
         px="md"
         hidden={!opened}
         width={{ base: 200 }}
-        sx={(theme) => ({ color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[3] })}
+        sx={(theme) => ({ color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[3], minWidth: '200px' })}
       >
         <Navbar.Section grow className={classes.links} component={ScrollArea}>
           <div className={classes.linksInner}>{links}</div>

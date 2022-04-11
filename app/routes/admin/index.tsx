@@ -1,21 +1,18 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
+import { LinksFunction } from 'remix';
+
+import EngineDemo from '~/components/Editor';
+import stylesHref from '~/styles/editor.css';
+
+export const links: LinksFunction = () => {
+  return [
+    { rel: 'stylesheet', href: stylesHref },
+  ];
+};
 
 const Admin: FC = () => {
-  useEffect(() => {
 
-  }, []);
-  return <h1>
-
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-    Admin Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est rerum voluptatibus hic unde. Atque repellendus vel cum veniam. Culpa illo explicabo quas optio, praesentium architecto nesciunt vitae quidem iste tenetur.
-  </h1>;
+  return <EngineDemo />;
 };
 
 export default Admin;
