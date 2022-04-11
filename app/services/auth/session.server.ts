@@ -4,7 +4,7 @@ import { createCookieSessionStorage } from 'remix';
 // 导出整个 sessionStorage 对象
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: '_session', //  在这里使用你想要的任何名称
+    name: '_auth', //  在这里使用你想要的任何名称
     sameSite: 'lax', // 这有助于  CSRF
     path: '/', // 记得添加这个，这样 cookie 就可以在所有路由中工作
     httpOnly: true, // 出于安全原因，将这个 cookie 设为 http only
