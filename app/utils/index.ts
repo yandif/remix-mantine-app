@@ -31,6 +31,12 @@ export const formatDate = (
  */
 export const auth = new Auth();
 
+/**
+ * @description 判断是否是对象
+ * @example
+ * isObject({}) // true
+ * isObject([]) // false
+ */
 export const isObject = (obj: any) => {
   return Object.is(Object.prototype.toString.call(obj), '[object Object]');
 };

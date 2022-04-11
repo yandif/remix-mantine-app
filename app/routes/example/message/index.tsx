@@ -1,6 +1,6 @@
 import { ActionFunction, Form, redirect, useFetcher } from 'remix';
 
-import { commitSession, getSession, setErrorMessage, setSuccessMessage } from '~/utils/message.server';
+import { commitSession, getSession, setErrorMessage, setSuccessMessage } from '~/services/message/message.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));

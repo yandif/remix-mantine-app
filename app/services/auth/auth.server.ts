@@ -3,8 +3,8 @@ import { Authenticator } from 'remix-auth';
 
 import { sessionStorage } from '~/services/auth/session.server';
 import { FormStrategy } from '~/services/auth/strategy.server';
-import { db } from '~/utils/db.server';
-import { auth } from '~/utils/tool';
+import { db } from '~/services/database/db.server';
+import { auth } from '~/utils';
 export const authenticator = new Authenticator<any>(sessionStorage);
 
 authenticator.use(

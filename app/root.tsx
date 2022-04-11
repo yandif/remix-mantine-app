@@ -1,19 +1,24 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import { json, Links, LinksFunction, LiveReload, LoaderFunction, Meta, MetaFunction, Outlet, Scripts, ScrollRestoration, useLoaderData } from 'remix';
+import {
+  json, Links, LinksFunction, LiveReload,
+  LoaderFunction, Meta, MetaFunction,
+  Outlet, Scripts, ScrollRestoration,
+  useLoaderData
+} from 'remix';
 
 import stylesHref from '~/styles/index.css';
 
-import { commitSession, getSession, ToastMessage } from './utils/message.server';
+import { commitSession, getSession, ToastMessage } from './services/message/message.server';
+
+type LoaderData = {
+  toastMessage: ToastMessage | null;
+};
 
 export const links: LinksFunction = () => {
   return [
     { rel: 'stylesheet', href: stylesHref },
   ];
-};
-
-type LoaderData = {
-  toastMessage: ToastMessage | null;
 };
 
 export const meta: MetaFunction = () => ({
@@ -44,7 +49,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function App() {
   const { toastMessage } = useLoaderData<LoaderData>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!toastMessage) {
       return;
     }

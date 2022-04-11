@@ -1,3 +1,9 @@
+/**
+ * @description 生成随机字符串
+ * @param length 字符串长度
+ * @example
+ * const str = random(16);
+ */
 const random = (length = 10): string => {
   let str = '';
   const arr =

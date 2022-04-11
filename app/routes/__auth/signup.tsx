@@ -1,13 +1,13 @@
 import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
 import { useEffect, useRef } from 'react';
+import { toast } from 'react-hot-toast';
 import { ActionFunction, Form, json, Link, LoaderFunction, useActionData, useNavigate } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
+import { db } from '~/services/database/db.server';
 import { useThemeStore } from '~/stores';
-import { db } from '~/utils/db.server';
-import { auth } from '~/utils/tool';
+import { auth } from '~/utils';
 
 export default function Signup() {
   const actionData = useActionData();
@@ -41,12 +41,7 @@ export default function Signup() {
     }
     if (actionData?.signupSuccess) {
       setTimeout(() => {
-        showNotification({
-          autoClose: 2000,
-          title: '注册成功',
-          message: '已注册成功，请进行登录',
-          color: 'green'
-        });
+        toast.success('注册成功');
         nav('/login');
       }, 1);
     }

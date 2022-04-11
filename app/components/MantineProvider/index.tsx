@@ -1,5 +1,4 @@
 import { ColorSchemeProvider, MantineProvider as DefaultMantineProvider } from '@mantine/core';
-import { NotificationsProvider } from '@mantine/notifications';
 import { FC } from 'react';
 
 import { useThemeStore } from '~/stores';
@@ -10,9 +9,7 @@ const MantineProvider: FC = ({ children }) => {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <DefaultMantineProvider theme={{ colorScheme }}>
-        <NotificationsProvider>
-          {children}
-        </NotificationsProvider>
+        {children}
       </DefaultMantineProvider>
     </ColorSchemeProvider>
   );

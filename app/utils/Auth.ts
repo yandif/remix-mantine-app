@@ -4,6 +4,13 @@ import base64 from './Base64';
 import random from './random';
 
 export default class Auth {
+  /**
+   * @description 加密密码2
+   * @param password 明文密码
+   * @example
+   * const md5pwd = auth.makePassword('123123');
+   * auth.checkPassword('123123', md5pwd);
+   */
   public makePassword(password: string): string {
     // 1.生成随机数
     const randomStr = random();
@@ -12,6 +19,14 @@ export default class Auth {
     return this.md5MakePassword(base64RandomStr, password);
   }
 
+  /**
+   * @description 校验密码
+   * @param password 明文密码
+   * @param sqlPwd 加密后的密码
+   * @example
+   * const md5pwd = auth.makePassword('123123');
+   * auth.checkPassword('123123', md5pwd);
+   */
   public checkPassword(password: string, sqlPwd: string) {
     // 1.从查询出来的密码中截取前面随机数
     const base64RandomStr = sqlPwd.substring(0, 16);
@@ -20,14 +35,14 @@ export default class Auth {
   }
 
   private md5MakePassword(base64RandomStr: string, password: string): string {
-    // 2.将密码与加密的随机数拼接
+    // 1.将密码与加密的随机数拼接
     const newPwd = base64RandomStr + password;
-    // 3.将第二步进行md5加密
+    // 2.将第二步进行md5加密
     const md5 = crypto.createHash('md5');
     const md5Pwd = md5.update(newPwd).digest('hex');
-    // 4.将加密后的md5Pwd继续加密
+    // 3.将加密后的md5Pwd继续加密
     const base64Md5 = base64.encode(md5Pwd);
-    // 5.继续将2和4拼接
+    // 4.继续将1和3拼接
     const lastPwd = base64RandomStr + base64Md5;
     return lastPwd;
   }

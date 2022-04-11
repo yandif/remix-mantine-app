@@ -5,7 +5,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/utils/message.server';
+} from '~/services/message/message.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
