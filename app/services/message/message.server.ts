@@ -7,11 +7,12 @@ const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 export const { commitSession, getSession } = createCookieSessionStorage({
   cookie: {
     name: '__message',
+    // domain: 'remix.run',
     path: '/',
-    httpOnly: true,
+    httpOnly: false,
     sameSite: 'lax',
     expires: new Date(Date.now() + ONE_YEAR),
-    secrets: ['SUPER_SECRET'],
+    secrets: ['zxcvjaiorjlkanj12378931274hjkhy678a6r'],
     secure: true,
   },
 });

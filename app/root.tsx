@@ -28,10 +28,11 @@ export const meta: MetaFunction = () => ({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
+  console.log(request.headers.get('cookie'));
   const session = await getSession(request.headers.get('cookie'));
 
   const toastMessage = session.get('toastMessage') as ToastMessage;
-
+  console.log(JSON.stringify(toastMessage));
   if (!toastMessage) {
     return json<LoaderData>({ toastMessage: null });
   }

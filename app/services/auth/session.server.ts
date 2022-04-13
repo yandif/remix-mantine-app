@@ -1,18 +1,18 @@
-// app/services/session.server.ts
 import { createCookieSessionStorage } from 'remix';
 
-// 导出整个 sessionStorage 对象
+const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: '_auth', //  在这里使用你想要的任何名称
-    sameSite: 'lax', // 这有助于  CSRF
     path: '/', // 记得添加这个，这样 cookie 就可以在所有路由中工作
-    httpOnly: true, // 出于安全原因，将这个 cookie 设为 http only
-    maxAge: 60 * 60 * 24 * 7,
-    secrets: ['asoidjfzxc1j238019a8sdfjkl234"AS"DF:'], // 将其替换为实际的 secret
+    httpOnly: false, // 出于安全原因，将这个 cookie 设为 http only
+    sameSite: 'lax', // 这有助于  CSRF
+    // domain: 'remix.run',
+    expires: new Date(Date.now() + ONE_WEEK),
+    secrets: ['asoidjfzxc1j238019a8sdfjkl234jdaiojfd"AS"DF:'], // 将其替换为实际的 secret
     secure: ['production', 'development'].includes(process.env.NODE_ENV), // 仅在 prod 中启用
   },
 });
 
-// 您也可以单独导出方法以供自己使用
 export const { getSession, commitSession, destroySession } = sessionStorage;
