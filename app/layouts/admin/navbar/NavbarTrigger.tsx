@@ -1,5 +1,5 @@
-import { createStyles, MediaQuery, ThemeIcon } from '@mantine/core';
-import { FC } from 'react';
+import { createStyles, MediaQuery } from '@mantine/core';
+import type { FC } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
 
 import { useThemeStore } from '~/stores';

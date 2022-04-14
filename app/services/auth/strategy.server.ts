@@ -1,5 +1,6 @@
-import { AppLoadContext, SessionStorage } from 'remix';
-import { AuthenticateOptions, Strategy } from 'remix-auth';
+import type { AppLoadContext, SessionStorage } from 'remix';
+import type { AuthenticateOptions } from 'remix-auth';
+import { Strategy } from 'remix-auth';
 
 export interface Params {
   form: FormData;

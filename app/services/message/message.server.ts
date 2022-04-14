@@ -1,4 +1,5 @@
-import { createCookieSessionStorage, Session } from 'remix';
+import type { Session } from 'remix';
+import { createCookieSessionStorage } from 'remix';
 
 export type ToastMessage = { message: string; type: 'success' | 'error' };
 

@@ -1,4 +1,4 @@
-import { LoaderFunction } from 'remix';
+import type { LoaderFunction } from 'remix';
 
 import AdminLayout from '~/layouts/admin';
 import { authenticator } from '~/services/auth/auth.server';

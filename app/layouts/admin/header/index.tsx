@@ -1,4 +1,5 @@
-import { Avatar, Burger, createStyles, Divider, Group, Header, HeaderProps, MediaQuery, Menu, Text, UnstyledButton, useMantineTheme } from '@mantine/core';
+import type { HeaderProps } from '@mantine/core';
+import { Avatar, Burger, createStyles, Divider, Group, Header, MediaQuery, Menu, Text, UnstyledButton, useMantineTheme } from '@mantine/core';
 import { Link } from 'remix';
 import { ChevronDown, Logout, Settings } from 'tabler-icons-react';
 

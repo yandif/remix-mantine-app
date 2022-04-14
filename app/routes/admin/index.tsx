@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { LinksFunction } from 'remix';
+import type { FC } from 'react';
+import type { LinksFunction } from 'remix';
 
 import EngineDemo from '~/components/Editor';
 import stylesHref from '~/styles/editor.css';

@@ -1,5 +1,5 @@
 import { ColorSchemeProvider, MantineProvider as DefaultMantineProvider } from '@mantine/core';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import { useThemeStore } from '~/stores';
 

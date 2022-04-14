@@ -1,7 +1,8 @@
 import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
-import { ActionFunction, Form, json, Link, LoaderFunction, useActionData } from 'remix';
+import type { ActionFunction, LoaderFunction } from 'remix';
+import { Form, json, Link, useActionData } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
 import { useThemeStore } from '~/stores';

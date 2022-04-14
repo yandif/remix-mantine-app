@@ -1,7 +1,8 @@
 import { Box, Collapse, createStyles, Group, Text, UnstyledButton } from '@mantine/core';
 import { useState } from 'react';
 import { Link, useLocation } from 'remix';
-import { ChevronLeft, ChevronRight, Icon as TablerIcon } from 'tabler-icons-react';
+import type { Icon as TablerIcon } from 'tabler-icons-react';
+import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
 
 const useStyles = createStyles((theme) => ({
   control: {

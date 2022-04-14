@@ -1,5 +1,5 @@
 import { Button, Container, createStyles, Group, Text, Title } from '@mantine/core';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { useNavigate } from 'remix';
 
 const useStyles = createStyles((theme) => ({

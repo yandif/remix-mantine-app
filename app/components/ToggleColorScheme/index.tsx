@@ -1,4 +1,5 @@
-import { ActionIcon, ActionIconProps } from '@mantine/core';
+import type { ActionIconProps } from '@mantine/core';
+import { ActionIcon } from '@mantine/core';
 import { MoonStars, Sun } from 'tabler-icons-react';
 
 import { useThemeStore } from '~/stores';

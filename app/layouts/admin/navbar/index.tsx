@@ -1,4 +1,5 @@
-import { createStyles, MediaQuery, Navbar, NavbarProps, ScrollArea } from '@mantine/core';
+import type { NavbarProps } from '@mantine/core';
+import { createStyles, MediaQuery, Navbar, ScrollArea } from '@mantine/core';
 import {
   Adjustments, Backpack,
   Folders,

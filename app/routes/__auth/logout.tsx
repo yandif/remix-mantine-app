@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { LoaderFunction } from 'remix';
+import type { FC } from 'react';
+import type { LoaderFunction } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
 

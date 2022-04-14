@@ -1,4 +1,4 @@
-import { ColorScheme } from '@mantine/core';
+import type { ColorScheme } from '@mantine/core';
 import create from 'zustand';
 
 type AdminLayoutState = {

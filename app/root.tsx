@@ -1,15 +1,18 @@
 import { useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
+import type {
+  LinksFunction,
+  LoaderFunction, MetaFunction
+} from 'remix';
 import {
-  json, Links, LinksFunction, LiveReload,
-  LoaderFunction, Meta, MetaFunction,
+  json, Links, LiveReload, Meta,
   Outlet, Scripts, ScrollRestoration,
   useLoaderData
 } from 'remix';
 
+import type { ToastMessage } from '~/services/message/message.server';
+import { commitSession, getSession } from '~/services/message/message.server';
 import stylesHref from '~/styles/index.css';
-
-import { commitSession, getSession, ToastMessage } from './services/message/message.server';
 
 type LoaderData = {
   toastMessage: ToastMessage | null;

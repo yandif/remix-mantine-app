@@ -2,7 +2,8 @@ import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@ma
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { ActionFunction, Form, json, Link, LoaderFunction, useActionData, useNavigate } from 'remix';
+import type { ActionFunction, LoaderFunction } from 'remix';
+import { Form, json, Link, useActionData, useNavigate } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
 import { db } from '~/services/database/db.server';
