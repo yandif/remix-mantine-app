@@ -1,4 +1,12 @@
-import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Paper,
+  PasswordInput,
+  TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
@@ -13,11 +21,15 @@ import { auth } from '~/utils';
 export default function Signup() {
   const actionData = useActionData();
   const { colorScheme, setColorScheme } = useThemeStore();
-  type FormData = { username?: string; password?: string, rePassword?: string };
+  type FormData = { username?: string; password?: string; rePassword?: string };
   const ref = useRef<HTMLFormElement>(null);
   const nav = useNavigate();
   const form = useForm<FormData>({
-    initialValues: actionData?.data || { username: '', password: '', rePassword: '' },
+    initialValues: actionData?.data || {
+      username: '',
+      password: '',
+      rePassword: '',
+    },
     validate: {
       username: (value?: string) => {
         if (!value) return '请输入邮箱';
@@ -31,7 +43,7 @@ export default function Signup() {
       rePassword: (value?: string) => {
         if (!value) return '请输入确认密码';
         if (value !== form.values.password) return '两次密码不一致';
-      }
+      },
     },
   });
 
@@ -62,16 +74,34 @@ export default function Signup() {
       <Box sx={{ maxWidth: 340 }} mx="auto" pt={100}>
         <Center>
           <h1>注册</h1>
-
         </Center>
 
-        <Form ref={ref} method='post'>
-          <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
-          <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
-          <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
-          <PasswordInput mt="md" label="确认密码" name="rePassword" {...form.getInputProps('rePassword')} />
+        <Form ref={ref} method="post">
+          <TextInput
+            name="themeColor"
+            onChange={() => {}}
+            value={colorScheme}
+            style={{ display: 'none' }}
+          />
+          <TextInput
+            mt="md"
+            label="邮箱"
+            name="username"
+            {...form.getInputProps('username')}
+          />
+          <PasswordInput
+            mt="md"
+            label="密码"
+            name="password"
+            {...form.getInputProps('password')}
+          />
+          <PasswordInput
+            mt="md"
+            label="确认密码"
+            name="rePassword"
+            {...form.getInputProps('rePassword')}
+          />
           <Group position="apart" mt="md">
-
             <Link style={{ textDecoration: 'none', color: '#777' }} to="/login">
               已有账号？去登录
             </Link>
@@ -79,11 +109,9 @@ export default function Signup() {
             <Button onClick={handleSubmit}>注册</Button>
           </Group>
         </Form>
-
-      </Box >
+      </Box>
     </Paper>
   );
-
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -100,7 +128,7 @@ export const action: ActionFunction = async ({ request }) => {
     const findUser = await db.account.findFirst({
       where: {
         username,
-      }
+      },
     });
 
     if (findUser) {
@@ -108,7 +136,7 @@ export const action: ActionFunction = async ({ request }) => {
         failed: true,
         themeColor,
         data,
-        errorData: { username }
+        errorData: { username },
       });
     }
 
@@ -117,8 +145,8 @@ export const action: ActionFunction = async ({ request }) => {
     await db.account.create({
       data: {
         username,
-        passwordHash: md5pwd
-      }
+        passwordHash: md5pwd,
+      },
     });
     return json({
       signupSuccess: true,

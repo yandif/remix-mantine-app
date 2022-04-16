@@ -2,7 +2,12 @@ import type { ActionFunction } from 'remix';
 import { useLoaderData } from 'remix';
 import { Form, redirect, useFetcher } from 'remix';
 
-import { commitSession, getSession, setErrorMessage, setSuccessMessage } from '~/services/message/message.server';
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/services/message/message.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
@@ -45,21 +50,20 @@ export default function Index() {
       <h2>资源路由处理的动作 (fetcher.Form)</h2>
       <fetcher.Form method="post" action="submit-secret">
         <label>
-          输入数字:  <input name="number" type="text" required />
+          输入数字: <input name="number" type="text" required />
         </label>
         <button>提交</button>
       </fetcher.Form>
       <h2>资源路由处理的动作 (fetcher.submit())</h2>
       <fetcher.Form action="submit-secret" method="post">
         <label>
-          输入数字:  <input name="number" type="text" required />
+          输入数字: <input name="number" type="text" required />
         </label>
         <button
           type="button"
           onClick={(event) => {
             fetcher.submit(event.currentTarget.form);
-          }}
-        >
+          }}>
           提交
         </button>
       </fetcher.Form>

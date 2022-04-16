@@ -1,10 +1,14 @@
 import type { NavbarProps } from '@mantine/core';
 import { createStyles, MediaQuery, Navbar, ScrollArea } from '@mantine/core';
 import {
-  Adjustments, Backpack,
+  Adjustments,
+  Backpack,
   Folders,
-  Gauge, Message2, MessageDots,
-  Notes, Tags
+  Gauge,
+  Message2,
+  MessageDots,
+  Notes,
+  Tags,
 } from 'tabler-icons-react';
 
 import { useThemeStore } from '~/stores';
@@ -42,25 +46,29 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: theme.spacing.xl,
   },
 
-  trigger: {
-
-  }
+  trigger: {},
 }));
 
 const AdminNavbar = (props: Omit<NavbarProps, 'children'>) => {
   const { opened } = useThemeStore();
   const { classes } = useStyles();
-  const links = mockdata.map((item) => <LinksGroup  {...item} key={item.label} base="/admin" />);
+  const links = mockdata.map((item) => (
+    <LinksGroup {...item} key={item.label} base="/admin" />
+  ));
 
   return (
     <MediaQuery smallerThan="sm" styles={{ position: 'fixed' }}>
-      <Navbar {...props}
+      <Navbar
+        {...props}
         hiddenBreakpoint="sm"
         px="md"
         hidden={!opened}
         width={{ base: 200 }}
-        sx={(theme) => ({ color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[3], minWidth: '200px' })}
-      >
+        sx={(theme) => ({
+          color:
+            theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[3],
+          minWidth: '200px',
+        })}>
         <Navbar.Section grow className={classes.links} component={ScrollArea}>
           <div className={classes.linksInner}>{links}</div>
         </Navbar.Section>

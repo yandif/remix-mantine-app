@@ -1,4 +1,11 @@
-import { Button, Container, createStyles, Group, Text, Title } from '@mantine/core';
+import {
+  Button,
+  Container,
+  createStyles,
+  Group,
+  Text,
+  Title,
+} from '@mantine/core';
 import type { FC } from 'react';
 import { useNavigate } from 'remix';
 
@@ -14,7 +21,10 @@ const useStyles = createStyles((theme) => ({
     fontSize: 220,
     lineHeight: 1,
     marginBottom: theme.spacing.xl * 1.5,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[4]
+        : theme.colors.gray[2],
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: 120,
@@ -47,7 +57,11 @@ const NotFoundTitle: FC<{ to: string }> = ({ to = '/' }) => {
     <Container className={classes.root}>
       <div className={classes.label}>404</div>
       <Title className={classes.title}>你访问的资源不存在</Title>
-      <Text color="dimmed" size="lg" align="center" className={classes.description}>
+      <Text
+        color="dimmed"
+        size="lg"
+        align="center"
+        className={classes.description}>
         这只是一个 404 页面，您可能输入了错误的地址，或者页面已移至另一个 URL。
       </Text>
       <Group position="center">

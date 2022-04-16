@@ -1,4 +1,12 @@
-import { Box, Button, Center, Group, Paper, PasswordInput, TextInput } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Paper,
+  PasswordInput,
+  TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
@@ -25,7 +33,7 @@ export default function Login() {
         if (!value) return '请输入密码';
         if (value.length < 6) return '密码不能少于6位';
         if (value === actionData?.errorData?.password) return '密码错误';
-      }
+      },
     },
   });
 
@@ -52,20 +60,36 @@ export default function Login() {
           <h1>登录</h1>
         </Center>
 
-        <Form ref={ref} method='post'>
-          <TextInput name="themeColor" onChange={() => { }} value={colorScheme} style={{ display: 'none' }} />
-          <TextInput mt="md" label="邮箱" name="username" {...form.getInputProps('username')} />
-          <PasswordInput mt="md" label="密码" name="password" {...form.getInputProps('password')} />
+        <Form ref={ref} method="post">
+          <TextInput
+            name="themeColor"
+            onChange={() => {}}
+            value={colorScheme}
+            style={{ display: 'none' }}
+          />
+          <TextInput
+            mt="md"
+            label="邮箱"
+            name="username"
+            {...form.getInputProps('username')}
+          />
+          <PasswordInput
+            mt="md"
+            label="密码"
+            name="password"
+            {...form.getInputProps('password')}
+          />
           <Group position="apart" mt="md">
-            <Link style={{ textDecoration: 'none', color: '#777' }} to="/signup">
+            <Link
+              style={{ textDecoration: 'none', color: '#777' }}
+              to="/signup">
               还没有账号？去注册
             </Link>
 
             <Button onClick={handleSubmit}>登录</Button>
           </Group>
         </Form>
-
-      </Box >
+      </Box>
     </Paper>
   );
 }

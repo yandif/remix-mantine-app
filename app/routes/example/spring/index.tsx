@@ -19,7 +19,9 @@ export default function IndexRoute() {
       interpolate({ x: 0 });
       setTimeout(() => {
         interpolate({ x: 1 });
-        setTimeout(() => { a(); }, 1000);
+        setTimeout(() => {
+          a();
+        }, 1000);
       }, 1000);
     };
     a();
@@ -40,8 +42,7 @@ export default function IndexRoute() {
         opacity,
         color: x.to({ range: [0, 1], output: ['#000', '#f00'] }),
         scale: x.to({ range: [0, 1], output: [1, 1.5] }),
-      }}
-    >
+      }}>
       哈哈
     </animated.h1>
   );
