@@ -14,7 +14,7 @@ export const { commitSession, getSession } = createCookieSessionStorage({
     sameSite: 'lax',
     expires: new Date(Date.now() + ONE_YEAR),
     secrets: ['zxcvjaiorjlkanj12378931274hjkhy678a6r'],
-    secure: true,
+    secure: ['production'].includes(process.env.NODE_ENV),
   },
 });
 

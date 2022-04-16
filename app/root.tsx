@@ -1,14 +1,7 @@
 import { useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import type {
-  LinksFunction,
-  LoaderFunction, MetaFunction
-} from 'remix';
-import {
-  json, Links, LiveReload, Meta,
-  Outlet, Scripts, ScrollRestoration,
-  useLoaderData
-} from 'remix';
+import type { LinksFunction, LoaderFunction, MetaFunction } from 'remix';
+import { json, Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from 'remix';
 
 import type { ToastMessage } from '~/services/message/message.server';
 import { commitSession, getSession } from '~/services/message/message.server';
@@ -31,11 +24,11 @@ export const meta: MetaFunction = () => ({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  console.log(request.headers.get('cookie'));
+
   const session = await getSession(request.headers.get('cookie'));
 
   const toastMessage = session.get('toastMessage') as ToastMessage;
-  console.log(JSON.stringify(toastMessage));
+
   if (!toastMessage) {
     return json<LoaderData>({ toastMessage: null });
   }

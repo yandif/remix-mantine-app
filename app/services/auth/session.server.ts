@@ -11,7 +11,7 @@ export const sessionStorage = createCookieSessionStorage({
     // domain: 'remix.run',
     expires: new Date(Date.now() + ONE_WEEK),
     secrets: ['asoidjfzxc1j238019a8sdfjkl234jdaiojfd"AS"DF:'], // 将其替换为实际的 secret
-    secure: ['production', 'development'].includes(process.env.NODE_ENV), // 仅在 prod 中启用
+    secure: ['production'].includes(process.env.NODE_ENV), // 仅在 prod 中启用
   },
 });
 

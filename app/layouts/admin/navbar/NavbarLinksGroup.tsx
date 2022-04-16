@@ -72,7 +72,14 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, ba
   const hasLinks = Array.isArray(links);
   const ChevronIcon = theme.dir === 'ltr' ? ChevronRight : ChevronLeft;
   const location = useLocation();
-  const wrapperClass = (c: string, pathname?: string) => location.pathname === base + pathname ? `${c} ${classes.controlActive}` : c;
+
+  // 高亮活跃的菜单
+  const wrapperClass = (c: string, pathname?: string) => {
+    const RealPathName = location.pathname.endsWith('/') ? location.pathname : location.pathname + '/';
+    const activePathName = pathname?.endsWith('/') ? base + pathname : base + pathname + '/';
+    return RealPathName === activePathName ? `${c} ${classes.controlActive}` : c;
+  };
+
   const initOpened = (hasLinks ? links : [])?.some(_link => location.pathname === base + _link.link);
   const [opened, setOpened] = useState(initiallyOpened || initOpened || false);
   const items = (hasLinks ? links : []).map((_link) => (
