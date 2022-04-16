@@ -20,16 +20,6 @@ type LoaderData = {
   toastMessage: ToastMessage | null;
 };
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: stylesHref }];
-};
-
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'Remix 应用',
-  viewport: 'width=device-width,initial-scale=1',
-});
-
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
 
@@ -40,7 +30,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   if (!toastMessage.type) {
-    throw new Error('Message should have a type');
+    throw new Error('消息应该有 type 属性');
   }
 
   return json<LoaderData>(
@@ -53,9 +43,8 @@ export default function App() {
   const { toastMessage } = useLoaderData<LoaderData>();
 
   useEffect(() => {
-    if (!toastMessage) {
-      return;
-    }
+    if (!toastMessage) return;
+
     const { message, type } = toastMessage;
 
     switch (type) {
@@ -86,3 +75,13 @@ export default function App() {
     </html>
   );
 }
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: stylesHref }];
+};
+
+export const meta: MetaFunction = () => ({
+  charset: 'utf-8',
+  title: 'Remix 应用',
+  viewport: 'width=device-width,initial-scale=1',
+});

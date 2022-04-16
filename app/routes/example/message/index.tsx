@@ -62,6 +62,7 @@ export default function Index() {
         <button
           type="button"
           onClick={(event) => {
+            console.log(event.currentTarget.form);
             fetcher.submit(event.currentTarget.form);
           }}>
           提交

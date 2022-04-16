@@ -1,3 +1,7 @@
 import NotFoundTitle from '~/components/NotFound';
 
-export default () => <NotFoundTitle to="/" />;
+const NotFound = () => {
+  return <NotFoundTitle to="/" />;
+};
+
+export default NotFound;

@@ -2,7 +2,7 @@ import { Outlet } from 'remix';
 
 import MantineProvider from '~/components/MantineProvider';
 
-const Auth = () => {
+const AuthRoot = () => {
   return (
     <MantineProvider>
       <Outlet />
@@ -10,4 +10,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default AuthRoot;

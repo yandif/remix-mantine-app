@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Link } from 'remix';
 
-const Main: FC = () => {
+const Index: FC = () => {
   return (
     <div>
       <h1>Home</h1>
@@ -14,4 +14,4 @@ const Main: FC = () => {
   );
 };
 
-export default Main;
+export default Index;
