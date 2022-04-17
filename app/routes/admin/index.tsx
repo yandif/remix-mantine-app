@@ -9,7 +9,11 @@ export const links: LinksFunction = () => {
 };
 
 const Admin: FC = () => {
-  return <EngineDemo />;
+  return (
+    <div style={{ padding: '0 10px' }}>
+      <EngineDemo />
+    </div>
+  );
 };
 
 export default Admin;
