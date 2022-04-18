@@ -1,12 +1,6 @@
 import { Button, createStyles, Group, Paper } from '@mantine/core';
 import { FloatingMenu as DefaultFloatingMenu } from '@tiptap/react';
-import {
-  Bold,
-  Italic,
-  List,
-  ListNumbers,
-  Strikethrough,
-} from 'tabler-icons-react';
+import { List, ListNumbers } from 'tabler-icons-react';
 
 import useTool from './hooks/useTool';
 
@@ -50,6 +44,7 @@ const BubbleMenu = ({ editor }: { editor: any }) => {
       Icon: ListNumbers,
     },
   ];
+
   return (
     <DefaultFloatingMenu editor={editor} tippyOptions={{ duration: 100 }}>
       <Paper p={0}>

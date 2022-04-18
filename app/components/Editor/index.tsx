@@ -10,7 +10,6 @@ import StarterKit from '@tiptap/starter-kit';
 import { useEffect, useState } from 'react';
 
 import BubbleMenu from './MenuBar/BubbleMenu';
-import FloatingMenu from './MenuBar/FloatingMenu';
 import MenuBar from './MenuBar/HeaderMenu';
 
 const mainSx = (theme: MantineTheme) => {
@@ -104,7 +103,6 @@ export default () => {
       sx={mainSx as any}
       style={{ maxWidth: '800px', position: 'relative' }}
       shadow="sm">
-      <FloatingMenu editor={editor} />
       <div ref={setParent} />
       <BubbleMenu
         editor={editor}

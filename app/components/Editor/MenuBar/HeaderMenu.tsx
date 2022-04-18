@@ -60,9 +60,6 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 
   const menus = [
-    { label: '图片', children: <Image editor={editor} /> },
-    { label: '颜色', children: <Color editor={editor} /> },
-    { label: '背景色', children: <Hightlight editor={editor} /> },
     { label: '标题与正文', children: <HeaderAndParagraph editor={editor} /> },
     {
       label: '粗体',
@@ -112,6 +109,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
       active: engine.blockquote.active(),
       Icon: Quote,
     },
+
+    { label: '图片', children: <Image editor={editor} /> },
+    { label: '颜色', children: <Color editor={editor} /> },
+    { label: '背景色', children: <Hightlight editor={editor} /> },
     {
       label: '分割线',
       onClick: engine.horizontalRule.run,
