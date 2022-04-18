@@ -4,6 +4,7 @@ import { createStyles, Paper } from '@mantine/core';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
+import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -58,6 +59,9 @@ export default () => {
         inline: true,
         allowBase64: true,
       }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph', 'image'],
+      }),
     ],
     content:
       '<h1>Hello <mark data-color="#ffa8a8" style="background-color: #ffa8a8">world</mark></h1><p>Hello world</p><p>Hello world</p><p>Hello world</p><p>Hello world</p>',
@@ -77,6 +81,7 @@ export default () => {
   const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
   const [parent, setParent] = useState<HTMLDivElement | null>(null);
   const [tippy, setTippy] = useState<any>(null);
+
   const onTippyUpdate = (tippy: any) => {
     const { popper } = tippy;
     if (!popper || !wrapper) return;

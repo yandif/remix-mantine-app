@@ -2,6 +2,10 @@
 import { Button, createStyles, Group, Paper } from '@mantine/core';
 import { Fragment } from 'react';
 import {
+  AlignCenter,
+  AlignJustified,
+  AlignLeft,
+  AlignRight,
   ArrowBackUp,
   Bold,
   Braces,
@@ -109,7 +113,30 @@ const MenuBar = ({ editor }: { editor: any }) => {
       active: engine.blockquote.active(),
       Icon: Quote,
     },
-
+    {
+      label: '左',
+      onClick: engine.textAlign.left.run,
+      active: engine.textAlign.left.active(),
+      Icon: AlignLeft,
+    },
+    {
+      label: '中',
+      onClick: engine.textAlign.center.run,
+      active: engine.textAlign.center.active(),
+      Icon: AlignCenter,
+    },
+    {
+      label: '右',
+      onClick: engine.textAlign.right.run,
+      active: engine.textAlign.right.active(),
+      Icon: AlignRight,
+    },
+    {
+      label: '对其',
+      onClick: engine.textAlign.justify.run,
+      active: engine.textAlign.justify.active(),
+      Icon: AlignJustified,
+    },
     { label: '图片', children: <Image editor={editor} /> },
     { label: '颜色', children: <Color editor={editor} /> },
     { label: '背景色', children: <Hightlight editor={editor} /> },

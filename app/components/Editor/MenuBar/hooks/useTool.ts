@@ -77,11 +77,33 @@ export default function useTool(editor: any) {
         run: () => editor.chain().focus().setParagraph().run(),
       },
       clearMark: {
-        run: () => editor.chain().focus().unsetAllMarks().clearNodes().run(),
+        run: () =>
+          editor
+            .chain()
+            .focus()
+            .unsetAllMarks()
+            .clearNodes()
+            .unsetTextAlign()
+            .run(),
       },
-      highlight:{
-        
-      }
+      textAlign: {
+        left: {
+          active: () => editor.isActive({ textAlign: 'left' }),
+          run: () => editor.chain().focus().setTextAlign('left').run(),
+        },
+        center: {
+          active: () => editor.isActive({ textAlign: 'center' }),
+          run: () => editor.chain().focus().setTextAlign('center').run(),
+        },
+        right: {
+          active: () => editor.isActive({ textAlign: 'right' }),
+          run: () => editor.chain().focus().setTextAlign('right').run(),
+        },
+        justify: {
+          active: () => editor.isActive({ textAlign: 'justify' }),
+          run: () => editor.chain().focus().setTextAlign('justify').run(),
+        },
+      },
       // 'listItem':{
       //   active:()=> editor.isActive('italic'),
       //   run:() => editor.chain().focus().toggleItalic().run(),
