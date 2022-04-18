@@ -140,7 +140,6 @@
   padding: 0;
 }
 .ProseMirror ul[data-type='taskList'] li {
-  align-items: center;
   display: flex;
 }
 .ProseMirror ul[data-type='taskList'] li > label {

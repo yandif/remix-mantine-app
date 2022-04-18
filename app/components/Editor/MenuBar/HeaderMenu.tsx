@@ -17,13 +17,18 @@ import {
   ListNumbers,
   Minus,
   Quote,
+  SquareCheck,
   Strikethrough,
+  Subscript,
+  Superscript,
+  Underline,
 } from 'tabler-icons-react';
 
 import Color from './components/Colorx';
 import HeaderAndParagraph from './components/HeaderAndParagraph';
 import Hightlight from './components/Highlight';
 import Image from './components/Image';
+import LinkMenu from './components/Link';
 import useTool from './hooks/useTool';
 
 const useStyles = createStyles((theme) => {
@@ -137,6 +142,32 @@ const MenuBar = ({ editor }: { editor: any }) => {
       active: engine.textAlign.justify.active(),
       Icon: AlignJustified,
     },
+    {
+      label: '上标',
+      onClick: engine.superscript.run,
+      active: engine.superscript.active(),
+      Icon: Superscript,
+    },
+
+    {
+      label: '下标',
+      onClick: engine.subscript.run,
+      active: engine.subscript.active(),
+      Icon: Subscript,
+    },
+    {
+      label: '下划线',
+      onClick: engine.underline.run,
+      active: engine.underline.active(),
+      Icon: Underline,
+    },
+    {
+      label: '任务项',
+      onClick: engine.taskList.run,
+      active: engine.taskList.active(),
+      Icon: SquareCheck,
+    },
+    { label: '链接', children: <LinkMenu editor={editor} /> },
     { label: '图片', children: <Image editor={editor} /> },
     { label: '颜色', children: <Color editor={editor} /> },
     { label: '背景色', children: <Hightlight editor={editor} /> },

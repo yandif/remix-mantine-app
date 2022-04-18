@@ -84,6 +84,7 @@ export default function useTool(editor: any) {
             .unsetAllMarks()
             .clearNodes()
             .unsetTextAlign()
+            .unsetLink()
             .run(),
       },
       textAlign: {
@@ -104,14 +105,29 @@ export default function useTool(editor: any) {
           run: () => editor.chain().focus().setTextAlign('justify').run(),
         },
       },
-      // 'listItem':{
-      //   active:()=> editor.isActive('italic'),
-      //   run:() => editor.chain().focus().toggleItalic().run(),
-      // },
-      // 'text',
-      // 'document',
-      // 'dropcursor',
-      // 'gapcursor',
+      subscript: {
+        active: () => editor.isActive('subscript'),
+        run: () =>
+          editor.chain().focus().unsetSuperscript().toggleSubscript().run(),
+      },
+      superscript: {
+        active: () => editor.isActive('superscript'),
+        run: () =>
+          editor.chain().focus().unsetSubscript().toggleSuperscript().run(),
+      },
+      underline: {
+        active: () => editor.isActive('underline'),
+        run: () => editor.chain().focus().toggleUnderline().run(),
+      },
+      taskList: {
+        active: () => editor.isActive('taskList'),
+        run: () => editor.chain().focus().toggleTaskList().run(),
+      },
+      // 'listItem' // 列项
+      // 'text', 文字
+      // 'document', 文档
+      // 'dropcursor', 拖放光标
+      // 'gapcursor', 游标
     };
   }, [editor]);
 }
