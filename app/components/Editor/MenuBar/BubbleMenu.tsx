@@ -61,7 +61,7 @@ const BubbleMenu = ({
       Icon: Strikethrough,
     },
   ];
-  const isImage = editor.isActive('image');
+  const hidden = editor.isActive('image') || editor.isActive('codeBlock');
   return (
     <DefaultBubbleMenu
       editor={editor}
@@ -74,7 +74,7 @@ const BubbleMenu = ({
         },
         onBeforeUpdate: onTippyUpdate,
       }}>
-      {!isImage && (
+      {!hidden && (
         <Paper p={0} withBorder shadow="sm">
           <Group position="center" spacing={0}>
             {menus.map(({ onClick, active, Icon, label }) => {
