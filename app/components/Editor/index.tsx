@@ -1,10 +1,13 @@
 /* eslint-disable react/display-name */
 import type { MantineTheme } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
+import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
+import Image from '@tiptap/extension-image';
+import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import BubbleMenu from './MenuBar/BubbleMenu';
 import FloatingMenu from './MenuBar/FloatingMenu';
@@ -43,12 +46,18 @@ const useStyles = createStyles((theme) => {
 
 export default () => {
   const { classes, cx } = useStyles();
-
+  // editor.commands.setImage({ src: 'https://example.com/foobar.png', alt: 'A boring example image', title: 'An example' })
   const editor = useEditor({
     extensions: [
       StarterKit,
       Highlight.configure({
         multicolor: true,
+      }),
+      TextStyle,
+      Color,
+      Image.configure({
+        inline: true,
+        allowBase64: true,
       }),
     ],
     content:
@@ -57,10 +66,14 @@ export default () => {
     editable: true,
     injectCSS: true,
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      console.log(html);
+      // const html = editor.getHTML();
+      // console.log(html);
     },
   });
+
+  useEffect(() => {
+    editor && console.log(editor);
+  }, [editor]);
 
   const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
   const [parent, setParent] = useState<HTMLDivElement | null>(null);

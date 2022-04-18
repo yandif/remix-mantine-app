@@ -16,8 +16,10 @@ import {
   Strikethrough,
 } from 'tabler-icons-react';
 
+import Color from './components/Colorx';
 import HeaderAndParagraph from './components/HeaderAndParagraph';
 import Hightlight from './components/Highlight';
+import Image from './components/Image';
 import useTool from './hooks/useTool';
 
 const useStyles = createStyles((theme) => {
@@ -58,6 +60,8 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 
   const menus = [
+    { label: '图片', children: <Image editor={editor} /> },
+    { label: '颜色', children: <Color editor={editor} /> },
     { label: '背景色', children: <Hightlight editor={editor} /> },
     { label: '标题与正文', children: <HeaderAndParagraph editor={editor} /> },
     {

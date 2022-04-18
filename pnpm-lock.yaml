@@ -14,7 +14,10 @@ specifiers:
   '@remix-run/eslint-config': ^1.3.5
   '@remix-run/react': ^1.3.5
   '@remix-run/serve': ^1.3.5
+  '@tiptap/extension-color': ^2.0.0-beta.9
   '@tiptap/extension-highlight': ^2.0.0-beta.33
+  '@tiptap/extension-image': ^2.0.0-beta.27
+  '@tiptap/extension-text-style': ^2.0.0-beta.23
   '@tiptap/react': ^2.0.0-beta.108
   '@tiptap/starter-kit': ^2.0.0-beta.183
   '@types/bcryptjs': ^2.4.2
@@ -51,7 +54,10 @@ dependencies:
   '@prisma/client': 3.12.0_prisma@3.12.0
   '@remix-run/react': 1.3.5_react-dom@17.0.2+react@17.0.2
   '@remix-run/serve': 1.3.5_react-dom@17.0.2+react@17.0.2
+  '@tiptap/extension-color': 2.0.0-beta.9_b30e287f4561cb13fae8e63f764ac1e3
   '@tiptap/extension-highlight': 2.0.0-beta.33
+  '@tiptap/extension-image': 2.0.0-beta.27
+  '@tiptap/extension-text-style': 2.0.0-beta.23
   '@tiptap/react': 2.0.0-beta.108_react-dom@17.0.2+react@17.0.2
   '@tiptap/starter-kit': 2.0.0-beta.183
   bcryptjs: 2.4.3
@@ -1429,6 +1435,15 @@ packages:
       '@tiptap/core': 2.0.0-beta.174
     dev: false
 
+  /@tiptap/extension-color/2.0.0-beta.9_b30e287f4561cb13fae8e63f764ac1e3:
+    resolution: {integrity: sha512-c8zcaNCdwUwbgrutfsG7LD9KH7ZvDVwKOZHbOL4gMSwdH9s+6r1ThRFLEbKgHIJlTa2jd96qoo+lVfj1Qwp7ww==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.1
+      '@tiptap/extension-text-style': ^2.0.0-beta.1
+    dependencies:
+      '@tiptap/extension-text-style': 2.0.0-beta.23
+    dev: false
+
   /@tiptap/extension-document/2.0.0-beta.15_@tiptap+core@2.0.0-beta.174:
     resolution: {integrity: sha512-ypENC+xUYD5m2t+KOKNYqyXnanXd5fxyIyhR1qeEEwwQwMXGNrO3kCH6O4mIDCpy+/WqHvVay2tV5dVsXnvY8w==}
     peerDependencies:
@@ -1508,6 +1523,12 @@ packages:
       prosemirror-state: 1.3.4
     dev: false
 
+  /@tiptap/extension-image/2.0.0-beta.27:
+    resolution: {integrity: sha512-kdJ7V39yNdVWUco/RBe7WgvFevd81l+pU6+Je9HpelqBBP953wDttzLMuAWQB4AeLv9WhKSlORHiFv2SKsV5NA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.1
+    dev: false
+
   /@tiptap/extension-italic/2.0.0-beta.26_@tiptap+core@2.0.0-beta.174:
     resolution: {integrity: sha512-vejGe2ra4K5ipFOn1U9viqF9X9nPTX8WSJpSOux+9UbKjHpANy7bz69tp66OIi/Wh5L/MMDc+luH/04qfVnpZw==}
     peerDependencies:
@@ -1546,6 +1567,12 @@ packages:
       '@tiptap/core': ^2.0.0-beta.1
     dependencies:
       '@tiptap/core': 2.0.0-beta.174
+    dev: false
+
+  /@tiptap/extension-text-style/2.0.0-beta.23:
+    resolution: {integrity: sha512-h/7o//RB4WRrLKWV7E5eFk7tZnfjH0Wt9klixOmvTmus6dm00a7r6wTuaT1GNjfPOgClP3K185lTA5rrdgrxRA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.1
     dev: false
 
   /@tiptap/extension-text/2.0.0-beta.15_@tiptap+core@2.0.0-beta.174:

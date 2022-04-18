@@ -61,36 +61,38 @@ const BubbleMenu = ({
       Icon: Strikethrough,
     },
   ];
-
+  const isImage = editor.isActive('image');
   return (
     <DefaultBubbleMenu
       editor={editor}
       tippyOptions={{
         duration: 100,
         placement: 'bottom',
-        // appendTo: parent,
+        appendTo: parent,
         onCreate: (tippy) => {
           setTippy(tippy);
         },
         onBeforeUpdate: onTippyUpdate,
       }}>
-      <Paper p={0} withBorder shadow="sm">
-        <Group position="center" spacing={0}>
-          {menus.map(({ onClick, active, Icon, label }) => {
-            return (
-              <Button
-                key={label}
-                variant="default"
-                onClick={onClick}
-                className={isActive(active)}
-                px={9}
-                style={{ border: 'none' }}>
-                <Icon size={16} />
-              </Button>
-            );
-          })}
-        </Group>
-      </Paper>
+      {!isImage && (
+        <Paper p={0} withBorder shadow="sm">
+          <Group position="center" spacing={0}>
+            {menus.map(({ onClick, active, Icon, label }) => {
+              return (
+                <Button
+                  key={label}
+                  variant="default"
+                  onClick={onClick}
+                  className={isActive(active)}
+                  px={9}
+                  style={{ border: 'none' }}>
+                  <Icon size={16} />
+                </Button>
+              );
+            })}
+          </Group>
+        </Paper>
+      )}
     </DefaultBubbleMenu>
   );
 };
