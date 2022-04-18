@@ -2,7 +2,7 @@ import type { TitleOrder } from '@mantine/core';
 import { Button, createStyles, Menu, Text, Title } from '@mantine/core';
 import { Check } from 'tabler-icons-react';
 
-import useTool from './useTool';
+import useTool from '../hooks/useTool';
 const useStyles = createStyles((theme) => {
   return {
     control: { border: 'none', fontWeight: 500 },
@@ -40,6 +40,7 @@ const HeaderAndParagraph = ({ editor }: { editor: any }) => {
   };
   return (
     <Menu
+      transition="fade"
       control={
         <Button variant="default" className={classes.control} px={9}>
           <Text className={classes.controlText}>{text()}</Text>

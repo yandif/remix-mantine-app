@@ -1,31 +1,14 @@
 /* eslint-disable react/display-name */
 import type { MantineTheme } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
+import Highlight from '@tiptap/extension-highlight';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useState } from 'react';
 
-import MenuBar from './MenuBar';
 import BubbleMenu from './MenuBar/BubbleMenu';
-const a = [
-  'blockquote',
-  'bold',
-  'bulletList',
-  'code',
-  'codeBlock',
-  'document',
-  'dropcursor',
-  'gapcursor',
-  'hardBreak',
-  'heading',
-  'history',
-  'horizontalRule',
-  'italic',
-  'listItem',
-  'orderedList',
-  'paragraph',
-  'strike',
-  'text',
-];
+import FloatingMenu from './MenuBar/FloatingMenu';
+import MenuBar from './MenuBar/HeaderMenu';
 
 const mainSx = (theme: MantineTheme) => {
   const isDark = theme.colorScheme === 'dark';
@@ -35,11 +18,14 @@ const mainSx = (theme: MantineTheme) => {
       '& *': {
         wordBreak: 'break-all',
         '&::selection': {
-          background: isDark ? '#555' : '#ddd',
+          background: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)',
         },
       },
       '&:focus': {
         outline: 'none',
+      },
+      mark: {
+        color: 'inherit',
       },
     },
   };
@@ -59,23 +45,77 @@ export default () => {
   const { classes, cx } = useStyles();
 
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: ' <h1>Hello world</h1><br/><br/>',
+    extensions: [
+      StarterKit,
+      Highlight.configure({
+        multicolor: true,
+      }),
+    ],
+    content:
+      '<h1>Hello <mark data-color="#ffa8a8" style="background-color: #ffa8a8">world</mark></h1><p>Hello world</p><p>Hello world</p><p>Hello world</p><p>Hello world</p>',
     autofocus: true,
     editable: true,
-    injectCSS: false,
+    injectCSS: true,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      console.log(html);
+    },
   });
+
+  const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
+  const [parent, setParent] = useState<HTMLDivElement | null>(null);
+  const [tippy, setTippy] = useState<any>(null);
+  const onTippyUpdate = (tippy: any) => {
+    const { popper } = tippy;
+    if (!popper || !wrapper) return;
+    const { top: top1 } = popper.getBoundingClientRect();
+    const { top: top2, bottom: bottom2 } = wrapper.getBoundingClientRect();
+    if (top1 === 0) {
+      popper.style.opacity = '1';
+      return true;
+    }
+    if (top1 - top2 < 0 || top1 - bottom2 > 0) {
+      console.log(0);
+      popper.style.opacity = '0';
+      return false;
+    } else {
+      popper.style.opacity = '1';
+      return true;
+    }
+  };
 
   return (
     <Paper
       radius={0}
       p={0}
       sx={mainSx as any}
-      style={{ maxWidth: '560px' }}
+      style={{ maxWidth: '800px', position: 'relative' }}
       shadow="sm">
-      <BubbleMenu editor={editor} />
+      <FloatingMenu editor={editor} />
+      <div ref={setParent} />
+      <BubbleMenu
+        editor={editor}
+        parent={parent}
+        setTippy={setTippy}
+        onTippyUpdate={onTippyUpdate}
+      />
       <MenuBar editor={editor} />
-      <Paper radius={0} m={0} p={16} withBorder style={{ borderTop: 'none' }}>
+      <Paper
+        ref={setWrapper}
+        radius={0}
+        m={0}
+        px={16}
+        py={32}
+        withBorder
+        onScroll={() => {
+          onTippyUpdate(tippy);
+        }}
+        style={{
+          borderTop: 'none',
+          maxHeight: '500px',
+          minHeight: '200px',
+          overflow: 'auto',
+        }}>
         <EditorContent editor={editor} />
       </Paper>
     </Paper>

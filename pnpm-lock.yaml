@@ -14,6 +14,7 @@ specifiers:
   '@remix-run/eslint-config': ^1.3.5
   '@remix-run/react': ^1.3.5
   '@remix-run/serve': ^1.3.5
+  '@tiptap/extension-highlight': ^2.0.0-beta.33
   '@tiptap/react': ^2.0.0-beta.108
   '@tiptap/starter-kit': ^2.0.0-beta.183
   '@types/bcryptjs': ^2.4.2
@@ -50,6 +51,7 @@ dependencies:
   '@prisma/client': 3.12.0_prisma@3.12.0
   '@remix-run/react': 1.3.5_react-dom@17.0.2+react@17.0.2
   '@remix-run/serve': 1.3.5_react-dom@17.0.2+react@17.0.2
+  '@tiptap/extension-highlight': 2.0.0-beta.33
   '@tiptap/react': 2.0.0-beta.108_react-dom@17.0.2+react@17.0.2
   '@tiptap/starter-kit': 2.0.0-beta.183
   bcryptjs: 2.4.3
@@ -1479,6 +1481,12 @@ packages:
       '@tiptap/core': ^2.0.0-beta.1
     dependencies:
       '@tiptap/core': 2.0.0-beta.174
+    dev: false
+
+  /@tiptap/extension-highlight/2.0.0-beta.33:
+    resolution: {integrity: sha512-TXyMiCcY5a0w5UFax350xU+T79GKJw2XwJ6Punc6sY2RRRgKaEbN1ZF0JCdQhQvD1ooKImHzCRYR8Pldb0xgfg==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.1
     dev: false
 
   /@tiptap/extension-history/2.0.0-beta.21_@tiptap+core@2.0.0-beta.174:

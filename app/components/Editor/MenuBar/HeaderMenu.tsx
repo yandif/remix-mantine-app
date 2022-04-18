@@ -16,8 +16,9 @@ import {
   Strikethrough,
 } from 'tabler-icons-react';
 
-import HeaderAndParagraph from './HeaderAndParagraph';
-import useTool from './useTool';
+import HeaderAndParagraph from './components/HeaderAndParagraph';
+import Hightlight from './components/Highlight';
+import useTool from './hooks/useTool';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
@@ -57,6 +58,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 
   const menus = [
+    { label: '背景色', children: <Hightlight editor={editor} /> },
     { label: '标题与正文', children: <HeaderAndParagraph editor={editor} /> },
     {
       label: '粗体',

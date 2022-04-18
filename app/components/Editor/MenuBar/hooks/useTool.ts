@@ -79,6 +79,9 @@ export default function useTool(editor: any) {
       clearMark: {
         run: () => editor.chain().focus().unsetAllMarks().clearNodes().run(),
       },
+      highlight:{
+        
+      }
       // 'listItem':{
       //   active:()=> editor.isActive('italic'),
       //   run:() => editor.chain().focus().toggleItalic().run(),
