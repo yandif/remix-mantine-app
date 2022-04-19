@@ -36,8 +36,13 @@ const mainSx = (theme: MantineTheme) => {
       mark: {
         color: 'inherit',
       },
-      'ul[data-type=taskList] p': {
-        margin: 0,
+      'ul[data-type=taskList]': {
+        p: {
+          margin: '0 0 1px 0',
+        },
+        li: {
+          margin: '4px 0',
+        },
       },
     },
   };
@@ -125,7 +130,7 @@ export default () => {
       radius={0}
       p={0}
       sx={mainSx as any}
-      style={{ maxWidth: '800px', position: 'relative' }}
+      style={{ maxWidth: '1000px', position: 'relative' }}
       shadow="sm">
       <div ref={setParent} />
       <BubbleMenu
