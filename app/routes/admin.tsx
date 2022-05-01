@@ -10,8 +10,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   return user;
 };
 
-const AdminLayoutWrapper = () => {
+export default function AdminLayoutWrapper() {
   return <AdminLayout />;
-};
-
-export default AdminLayoutWrapper;
+}

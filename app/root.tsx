@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import type { LinksFunction, LoaderFunction, MetaFunction } from 'remix';
+import { useCatch } from 'remix';
 import {
   json,
   Links,
@@ -12,6 +13,7 @@ import {
   useLoaderData,
 } from 'remix';
 
+import NotFoundTitle from '~/components/NotFound';
 import type { ToastMessage } from '~/services/message/message.server';
 import { commitSession, getSession } from '~/services/message/message.server';
 import stylesHref from '~/styles/index.css';
@@ -85,3 +87,24 @@ export const meta: MetaFunction = () => ({
   title: 'Remix 应用',
   viewport: 'width=device-width,initial-scale=1',
 });
+
+// export function CatchBoundary() {
+//   const caught = useCatch();
+//   console.log(caught);
+//   return (
+//     <html lang="en">
+//       <head>
+//         <title>错误!</title>
+//         <Meta />
+//         <Links />
+//       </head>
+//       <body>
+//         <NotFoundTitle to="/" />
+//         <Toaster />
+//         <ScrollRestoration />
+//         <Scripts />
+//         <LiveReload />
+//       </body>
+//     </html>
+//   );
+// }

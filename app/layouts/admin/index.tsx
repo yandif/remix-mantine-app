@@ -20,10 +20,16 @@ export default function AdminLayout() {
           <Paper
             radius={0}
             component={ScrollArea}
-            style={{
-              height: 'calc(100vh - 56px)',
-              width: '100%',
-              padding: '0 16px',
+            sx={(theme) => {
+              const isDark = theme.colorScheme === 'dark';
+
+              return {
+                height: 'calc(100vh - 56px)',
+                width: '100%',
+                backgroundColor: isDark
+                  ? theme.colors.dark[9]
+                  : theme.colors.gray[0],
+              };
             }}>
             <Outlet />
           </Paper>
