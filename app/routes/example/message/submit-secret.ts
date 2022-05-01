@@ -17,7 +17,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!number) {
     setErrorMessage(session, 'Number is required!');
     return json(
-      { ok: false },
+      { ok: false, name: '123123' },
       {
         headers: { 'Set-Cookie': await commitSession(session) },
       },
@@ -27,7 +27,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (Number(number) === 10) {
     setSuccessMessage(session, 'Awesome');
     return json(
-      { ok: true },
+      { ok: true, name: '123123' },
       {
         headers: { 'Set-Cookie': await commitSession(session) },
       },
@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request }) => {
   } else {
     setErrorMessage(session, 'Wrong! Guess again');
     return json(
-      { ok: false },
+      { ok: false, name: '123123' },
       {
         headers: { 'Set-Cookie': await commitSession(session) },
       },
