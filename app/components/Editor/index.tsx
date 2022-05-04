@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import type { MantineTheme } from '@mantine/core';
+import type { MantineTheme, PaperProps } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
@@ -14,16 +14,18 @@ import TextStyle from '@tiptap/extension-text-style';
 import underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect, useState } from 'react';
+import _ from 'lodash';
+import type { ReactNode } from 'react';
+import { Fragment } from 'react';
 
-import BubbleMenu from './MenuBar/BubbleMenu';
 import MenuBar from './MenuBar/HeaderMenu';
-
 const mainSx = (theme: MantineTheme) => {
   const isDark = theme.colorScheme === 'dark';
+
   return {
     '.ProseMirror': {
       padding: '0 16px',
+      background: isDark ? theme.colors.dark[5] : theme.white,
       '& *': {
         wordBreak: 'break-all',
         '&::selection': {
@@ -48,19 +50,22 @@ const mainSx = (theme: MantineTheme) => {
   };
 };
 
-const useStyles = createStyles((theme) => {
-  const isDark = theme.colorScheme === 'dark';
-  return {
-    main: {
-      paddingTop: 80,
-      paddingBottom: 80,
-    },
-  };
-});
+const useStyles = createStyles(() => ({}));
 
-export default () => {
-  const { classes, cx } = useStyles();
-  // editor.commands.setImage({ src: 'https://example.com/foobar.png', alt: 'A boring example image', title: 'An example' })
+export default (
+  props: PaperProps<'div'> & {
+    name?: string;
+    value?: string;
+    error?: ReactNode | string;
+    onChange: (val: string) => any;
+  },
+) => {
+  const handleChange = _.debounce((v) => {
+    props.onChange(v);
+    console.log(v);
+  }, 300);
+
+  const { theme } = useStyles();
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -87,77 +92,60 @@ export default () => {
         nested: true,
       }),
     ],
-    content:
-      '<h1>Hello <mark data-color="#ffa8a8" style="background-color: #ffa8a8">world</mark></h1><p>Hello world</p><p>Hello world</p><p>Hello world</p><p>Hello world</p>',
+    content: props.value,
     autofocus: true,
     editable: true,
     injectCSS: true,
     onUpdate: ({ editor }) => {
-      // const html = editor.getHTML();
-      // console.log(html);
+      const html = editor.getHTML();
+      handleChange(html);
     },
   });
 
-  useEffect(() => {
-    editor && console.log(editor);
-  }, [editor]);
-
-  const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
-  const [parent, setParent] = useState<HTMLDivElement | null>(null);
-  const [tippy, setTippy] = useState<any>(null);
-
-  const onTippyUpdate = (tippy: any) => {
-    const { popper } = tippy;
-    if (!popper || !wrapper) return;
-    const { top: top1 } = popper.getBoundingClientRect();
-    const { top: top2, bottom: bottom2 } = wrapper.getBoundingClientRect();
-    if (top1 === 0) {
-      popper.style.opacity = '1';
-      return true;
+  const borderColor = (() => {
+    if (props.error) {
+      return 'red';
     }
-    if (top1 - top2 < 0 || top1 - bottom2 > 0) {
-      console.log(0);
-      popper.style.opacity = '0';
-      return false;
-    } else {
-      popper.style.opacity = '1';
-      return true;
+    if (theme.colorScheme === 'dark') {
+      return '#1A1B1E';
     }
-  };
+    return 'rgb(233, 236, 239)';
+  })();
 
   return (
-    <Paper
-      radius={0}
-      p={0}
-      sx={mainSx as any}
-      style={{ maxWidth: '1000px', position: 'relative' }}
-      shadow="sm">
-      <div ref={setParent} />
-      <BubbleMenu
-        editor={editor}
-        parent={parent}
-        setTippy={setTippy}
-        onTippyUpdate={onTippyUpdate}
-      />
-      <MenuBar editor={editor} />
+    <Fragment>
       <Paper
-        ref={setWrapper}
         radius={0}
-        m={0}
-        px={16}
-        py={32}
-        withBorder
-        onScroll={() => {
-          onTippyUpdate(tippy);
-        }}
-        style={{
-          borderTop: 'none',
-          maxHeight: '500px',
-          minHeight: '200px',
-          overflow: 'auto',
-        }}>
-        <EditorContent editor={editor} />
+        p={0}
+        sx={mainSx as any}
+        style={{ position: 'relative' }}
+        {...props}>
+        <MenuBar editor={editor} />
+        <Paper
+          radius={0}
+          m={0}
+          px={16}
+          py={16}
+          withBorder
+          sx={(theme) => {
+            const isDark = theme.colorScheme === 'dark';
+            return { background: isDark ? theme.colors.dark[5] : theme.white };
+          }}
+          onClick={() => {
+            if (!editor?.isFocused) {
+              editor?.commands.focus();
+            }
+          }}
+          style={{
+            maxHeight: '500px',
+            minHeight: '200px',
+            overflow: 'auto',
+            cursor: 'text',
+            borderColor,
+          }}>
+          <EditorContent editor={editor} />
+        </Paper>
       </Paper>
-    </Paper>
+    </Fragment>
   );
 };

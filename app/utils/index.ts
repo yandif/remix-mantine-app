@@ -40,3 +40,12 @@ export const auth = new Auth();
 export const isObject = (obj: any) => {
   return Object.is(Object.prototype.toString.call(obj), '[object Object]');
 };
+
+/**
+ * @description 休眠
+ * @example
+ * sleep(1000) // 休眠一秒
+ */
+export const sleep = (t = 1000) => {
+  return new Promise((r) => setTimeout(() => r(0), t));
+};

@@ -55,7 +55,14 @@ const MenuBar = ({ editor }: { editor: any }) => {
   const engine = useTool(editor);
 
   if (!editor || !engine) {
-    return null;
+    return (
+      <Paper
+        radius={0}
+        p={1}
+        withBorder
+        style={{ borderBottom: 'none', minHeight: 39 }}
+      />
+    );
   }
 
   const isActive = (active: boolean) => {
@@ -204,7 +211,11 @@ const MenuBar = ({ editor }: { editor: any }) => {
   ];
 
   return (
-    <Paper radius={0} p={0} withBorder>
+    <Paper
+      radius={0}
+      p={1}
+      withBorder
+      style={{ borderBottom: 'none', minHeight: 36 }}>
       <Group position="center" spacing={0}>
         {menus.map(({ onClick, active, Icon, children, label }) => {
           if (children) {
