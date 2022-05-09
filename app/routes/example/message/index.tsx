@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import type { ActionFunction } from 'remix';
-import { SubmitOptions, useLoaderData } from 'remix';
 import { Form, redirect, useFetcher } from 'remix';
 
 import {
@@ -38,9 +36,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const fetcher = useFetcher();
-  useEffect(() => {
-    console.log(fetcher.data);
-  }, [fetcher.data]);
+
   return (
     <>
       <h2>同一路由处理的动作</h2>
@@ -66,7 +62,6 @@ export default function Index() {
           type="button"
           onClick={async (event) => {
             await fetcher.submit(event.currentTarget.form, {});
-            console.log(fetcher);
           }}>
           提交
         </button>

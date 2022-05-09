@@ -1,10 +1,10 @@
-/* eslint-disable react/display-name */
-import type { MantineTheme, PaperProps } from '@mantine/core';
+import type { MantineTheme, PaperProps, Sx } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import TaskItem from '@tiptap/extension-task-item';
@@ -16,13 +16,12 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import _ from 'lodash';
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
 
-import MenuBar from './MenuBar/HeaderMenu';
 const mainSx = (theme: MantineTheme) => {
   const isDark = theme.colorScheme === 'dark';
 
   return {
+    background: isDark ? theme.colors.dark[5] : theme.white,
     '.ProseMirror': {
       padding: '0 16px',
       background: isDark ? theme.colors.dark[5] : theme.white,
@@ -46,29 +45,44 @@ const mainSx = (theme: MantineTheme) => {
           margin: '4px 0',
         },
       },
+      'p.is-empty.is-editor-empty': {
+        marginLeft: -4,
+        '&::before': {
+          color: isDark ? '#5c5f66' : '#adb5bd',
+          content: 'attr(data-placeholder)',
+          float: 'left',
+          height: 0,
+          pointerEvents: 'none',
+          fontSize: 14,
+        },
+      },
     },
   };
 };
 
 const useStyles = createStyles(() => ({}));
 
-export default (
+export default function Editor(
   props: PaperProps<'div'> & {
     name?: string;
     value?: string;
     error?: ReactNode | string;
+    placeholder?: string;
+    autofocus?: boolean;
     onChange: (val: string) => any;
   },
-) => {
+) {
   const handleChange = _.debounce((v) => {
     props.onChange(v);
-    console.log(v);
   }, 300);
 
   const { theme } = useStyles();
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Placeholder.configure({
+        placeholder: props.placeholder,
+      }),
       Highlight.configure({
         multicolor: true,
       }),
@@ -93,7 +107,7 @@ export default (
       }),
     ],
     content: props.value,
-    autofocus: true,
+    autofocus: !!props.autofocus,
     editable: true,
     injectCSS: true,
     onUpdate: ({ editor }) => {
@@ -103,49 +117,38 @@ export default (
   });
 
   const borderColor = (() => {
+    if (editor?.isFocused) {
+      return 'rgb(82, 166, 236)';
+    }
     if (props.error) {
       return 'red';
     }
     if (theme.colorScheme === 'dark') {
       return '#1A1B1E';
     }
-    return 'rgb(233, 236, 239)';
+    return 'rgb(206, 212, 218)';
   })();
 
   return (
-    <Fragment>
-      <Paper
-        radius={0}
-        p={0}
-        sx={mainSx as any}
-        style={{ position: 'relative' }}
-        {...props}>
-        <MenuBar editor={editor} />
-        <Paper
-          radius={0}
-          m={0}
-          px={16}
-          py={16}
-          withBorder
-          sx={(theme) => {
-            const isDark = theme.colorScheme === 'dark';
-            return { background: isDark ? theme.colors.dark[5] : theme.white };
-          }}
-          onClick={() => {
-            if (!editor?.isFocused) {
-              editor?.commands.focus();
-            }
-          }}
-          style={{
-            maxHeight: '500px',
-            minHeight: '200px',
-            overflow: 'auto',
-            cursor: 'text',
-            borderColor,
-          }}>
-          <EditorContent editor={editor} />
-        </Paper>
-      </Paper>
-    </Fragment>
+    <Paper
+      radius={0}
+      m={0}
+      p={0}
+      withBorder
+      sx={mainSx as Sx}
+      onClick={() => {
+        if (!editor?.isFocused) {
+          editor?.commands.focus();
+        }
+      }}
+      style={{
+        maxHeight: '600px',
+        minHeight: '400px',
+        overflow: 'auto',
+        cursor: 'text',
+        borderColor,
+      }}>
+      <EditorContent editor={editor} />
+    </Paper>
   );
-};
+}

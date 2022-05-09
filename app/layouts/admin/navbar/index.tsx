@@ -16,11 +16,11 @@ import { useThemeStore } from '~/stores';
 import { LinksGroup } from './NavbarLinksGroup';
 
 const mockdata = [
-  { label: '看板', icon: Gauge, link: '/dashboad' },
+  { label: '看板', icon: Gauge, link: '/dashboard' },
 
-  { label: '公告管理', icon: MessageDots, link: '/article/announcement' },
-  { label: '分类管理', icon: Folders, link: '/article/category' },
-  { label: '标签管理', icon: Tags, link: '/article/tag' },
+  { label: '公告管理', icon: MessageDots, link: '/announcement' },
+  { label: '分类管理', icon: Folders, link: '/category' },
+  { label: '标签管理', icon: Tags, link: '/tag' },
   {
     label: '文章管理',
     icon: Notes,
@@ -30,8 +30,8 @@ const mockdata = [
       { label: '写文章', link: '/article/create' },
     ],
   },
-  { label: '评论管理', icon: Message2, link: '/article/comment' },
-  { label: '反馈管理', icon: Backpack, link: '/article/feedback' },
+  { label: '评论管理', icon: Message2, link: '/comment' },
+  { label: '反馈管理', icon: Backpack, link: '/feedback' },
   { label: '系统设置', icon: Adjustments, link: '/setting' },
 ];
 

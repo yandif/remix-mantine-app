@@ -1,5 +1,6 @@
 import { AppShell, MediaQuery, Paper, ScrollArea } from '@mantine/core';
-import { Outlet } from 'remix';
+import { useEffect, useRef } from 'react';
+import { Outlet, useLocation } from 'remix';
 
 import MantineProvider from '~/components/MantineProvider';
 
@@ -7,6 +8,11 @@ import AdminHeader from './header';
 import AdminNavbar from './navbar';
 
 export default function AdminLayout() {
+  const location = useLocation();
+  const viewport = useRef<any>();
+  useEffect(() => {
+    viewport.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.key]);
   return (
     <MantineProvider>
       <AppShell
@@ -18,8 +24,10 @@ export default function AdminLayout() {
           largerThan="sm"
           styles={{ maxWidth: 'calc(100vw - 200px)' }}>
           <Paper
+            key={location.key}
             radius={0}
             component={ScrollArea}
+            viewportRef={viewport}
             sx={(theme) => {
               const isDark = theme.colorScheme === 'dark';
 

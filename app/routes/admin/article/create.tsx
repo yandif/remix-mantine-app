@@ -9,27 +9,27 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
-import { useState } from 'react';
 import type { ActionFunction, LinksFunction } from 'remix';
-import { json, useFetcher } from 'remix';
+import { json, redirect, useFetcher } from 'remix';
 
 import EngineDemo from '~/components/Editor';
+import { checkAuth } from '~/middleware/index.server';
+import { db } from '~/services/database/db.server';
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/services/message/message.server';
 import stylesHref from '~/styles/editor.css';
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: stylesHref }];
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  console.log(formData);
-  // redirect('');
-  return json({ ok: true });
-};
-
 const CreateArticle: FC = () => {
-  const [Value, setValue] = useState<string>();
   const fetcher = useFetcher();
+
   const form = useForm({
     initialValues: {
       title: '',
@@ -55,16 +55,19 @@ const CreateArticle: FC = () => {
         };
       }}>
       <Group position="apart">
-        <Title order={5}>新建文章</Title>
+        <Title order={5} style={{ lineHeight: '36px' }}>
+          新建文章
+        </Title>
       </Group>
       <Divider mt="md" mb="lg" />
-      <Box style={{ position: 'relative', minHeight: 500 }}>
+      <Box mx="xl" my="md" style={{ position: 'relative', minHeight: 500 }}>
         <fetcher.Form>
           <TextInput
             mb="md"
             required
             label="标题"
             placeholder="文章标题"
+            style={{ maxWidth: 400 }}
             {...form.getInputProps('title')}
           />
 
@@ -72,8 +75,12 @@ const CreateArticle: FC = () => {
             mb="md"
             required
             label="内容"
+            style={{ maxWidth: 800 }}
             {...form.getInputProps('content')}>
-            <EngineDemo {...form.getInputProps('content')} />
+            <EngineDemo
+              placeholder="文章内容"
+              {...form.getInputProps('content')}
+            />
           </InputWrapper>
 
           <Button
@@ -83,7 +90,6 @@ const CreateArticle: FC = () => {
                 await fetcher.submit(form.values, {
                   method: 'post',
                 });
-                console.log(fetcher);
               }
             }}>
             提交
@@ -95,3 +101,33 @@ const CreateArticle: FC = () => {
 };
 
 export default CreateArticle;
+
+export const action: ActionFunction = async ({ request }) => {
+  const user = await checkAuth(request);
+  const session = await getSession(request.headers.get('cookie'));
+  const formData = await request.formData();
+  const title = formData.get('title') as string;
+  const content = formData.get('content') as string;
+
+  if (title && content) {
+    const article = await db.article.create({
+      data: {
+        title,
+        content,
+        author: { connect: { id: user.id } },
+      },
+    });
+    setSuccessMessage(session, '提交成功!');
+    return redirect(`/admin/article/list/${article.id}`, {
+      headers: { 'Set-Cookie': await commitSession(session) },
+    });
+  } else {
+    setErrorMessage(session, '请确保文章有标题和内容有值!');
+    return json(
+      { ok: false },
+      {
+        headers: { 'Set-Cookie': await commitSession(session) },
+      },
+    );
+  }
+};

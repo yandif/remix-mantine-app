@@ -85,24 +85,3 @@ export const meta: MetaFunction = () => ({
   title: 'Remix 应用',
   viewport: 'width=device-width,initial-scale=1',
 });
-
-// export function CatchBoundary() {
-//   const caught = useCatch();
-//   console.log(caught);
-//   return (
-//     <html lang="en">
-//       <head>
-//         <title>错误!</title>
-//         <Meta />
-//         <Links />
-//       </head>
-//       <body>
-//         <NotFoundTitle to="/" />
-//         <Toaster />
-//         <ScrollRestoration />
-//         <Scripts />
-//         <LiveReload />
-//       </body>
-//     </html>
-//   );
-// }

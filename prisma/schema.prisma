@@ -10,8 +10,21 @@ datasource db {
 model Account {
   id           Int      @id @default(autoincrement())
   createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @map("updated_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
   username     String   @unique
   passwordHash String
   isSuper      Int      @default(0) @map("is_super")
+
+  Article Article[]
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  title     String
+  content   String   @db.Text
+
+  author    Account @relation(fields: [accountId], references: [id])
+  accountId Int
 }

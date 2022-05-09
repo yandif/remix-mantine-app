@@ -1,7 +1,9 @@
 body {
   margin: 0;
 }
-
+* {
+  scrollbar-width: thin;
+}
 *::-webkit-scrollbar {
   background: transparent;
   width: 6px;

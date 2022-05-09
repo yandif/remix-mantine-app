@@ -8,6 +8,8 @@ const Index: FC = () => {
       <Link to="admin">管理端</Link>
       <br />
       <Link to="example/message">例子:消息</Link>
+      <br />
+      <Link to="visx">图表</Link>
     </div>
   );
 };
