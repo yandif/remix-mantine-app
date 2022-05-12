@@ -16,7 +16,9 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
-import { useState } from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
@@ -53,23 +55,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const selectOption = {
     where: { author: { id: user.id } },
-    // where: {
-    //   email: { contains: email },
-    //   username: { contains: username },
-    //   mobile: { contains: mobile },
-    //   status,
-    //   platform,
-    // },
-    // select: {
-    //   id: true,
-    //   username: true,
-    //   email: true,
-    //   mobile: true,
-    //   status: true,
-    //   platform: true,
-    //   createdAt: true,
-    //   updatedAt: true,
-    // },
   };
 
   const total = await (await db.tag.findMany(selectOption)).length;
@@ -99,107 +84,34 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json(data);
 };
 
-function DetailModal({ itemId }: { itemId: string }) {
-  const fetcher = useFetcher();
+const TagModal: FC<{ data?: any }> = ({ data }) => {
   const [opened, setOpened] = useState(false);
+  const initialValues = { name: '', description: '' };
   const form = useForm({
-    initialValues: {
-      name: '',
-      description: '',
-    },
+    initialValues,
 
     validate: {
-      name: (value) => (value?.length === 0 ? '请输入标签名称' : null),
+      name: (value) => (value?.length === 0 ? '请输入名称' : null),
     },
   });
-  const handleOpen = async () => {
-    await fetcher.submit(
-      { id: itemId },
-      {
-        method: 'get',
-      },
-    );
-    console.log(await fetcher.data);
+
+  useEffect(() => {
+    if (data) {
+      form.setValues(data);
+    }
+  }, [data]);
+
+  const handleOpen = () => {
     setOpened(true);
   };
 
   const handleClose = () => {
-    form.setValues({ name: '', description: '' });
+    form.setValues(initialValues);
     setOpened(false);
   };
 
-  const handleCreate = async () => {
-    const res = form.validate();
-    if (!res.hasErrors) {
-      await fetcher.submit(form.values, {
-        method: 'post',
-      });
-      handleClose();
-    }
-  };
-
-  return (
-    <>
-      <UnstyledButton
-        onClick={handleOpen}
-        sx={(theme) => {
-          return {
-            whiteSpace: 'nowrap',
-            fontSize: 14,
-            padding: 4,
-            margin: 4,
-            display: 'block',
-            color: theme.colors.blue[6],
-          };
-        }}>
-        查看详情
-      </UnstyledButton>
-      <Modal opened={opened} onClose={handleClose} title="新建标签">
-        <fetcher.Form>
-          <TextInput
-            mb="md"
-            required
-            label="名称"
-            placeholder="标签名称"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('name')}
-          />
-          <TextInput
-            mb="md"
-            label="描述"
-            placeholder="标签描述"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('description')}
-          />
-          <Stack align="flex-end">
-            <Button onClick={handleCreate}>提交</Button>
-          </Stack>
-        </fetcher.Form>
-      </Modal>
-    </>
-  );
-}
-
-function CreateModal() {
   const fetcher = useFetcher();
-  const [opened, setOpened] = useState(false);
-  const form = useForm({
-    initialValues: {
-      name: '',
-      description: '',
-    },
-
-    validate: {
-      name: (value) => (value?.length === 0 ? '请输入标签名称' : null),
-    },
-  });
-
-  const handleClose = () => {
-    form.setValues({ name: '', description: '' });
-    setOpened(false);
-  };
-
-  const handleCreate = async () => {
+  const handleSave = async () => {
     const res = form.validate();
     if (!res.hasErrors) {
       await fetcher.submit(form.values, {
@@ -211,10 +123,30 @@ function CreateModal() {
 
   return (
     <>
-      <Button m={0} size="sm" onClick={() => setOpened(true)}>
-        新建标签
-      </Button>
-      <Modal opened={opened} onClose={handleClose} title="新建标签">
+      {data ? (
+        <UnstyledButton
+          onClick={handleOpen}
+          sx={(theme) => {
+            return {
+              whiteSpace: 'nowrap',
+              fontSize: 14,
+              padding: 4,
+              margin: 4,
+              display: 'block',
+              color: theme.colors.blue[6],
+            };
+          }}>
+          查看详情
+        </UnstyledButton>
+      ) : (
+        <Button m={0} size="sm" onClick={() => setOpened(true)}>
+          新建标签
+        </Button>
+      )}
+      <Modal
+        opened={opened}
+        onClose={handleClose}
+        title={data ? '编辑标签' : '新建标签'}>
         <fetcher.Form>
           <TextInput
             mb="md"
@@ -231,21 +163,18 @@ function CreateModal() {
             style={{ maxWidth: 400 }}
             {...form.getInputProps('description')}
           />
+
           <Stack align="flex-end">
-            <Button onClick={handleCreate}>提交</Button>
+            <Button onClick={handleSave}>{data ? '保存' : '提交'}</Button>
           </Stack>
         </fetcher.Form>
       </Modal>
     </>
   );
-}
+};
 
-export default function TagList() {
-  const data = useLoaderData<LoaderData>();
-
-  const nav = useNavigate();
-
-  const [size, setSize] = useState(data.size);
+function useSize(_size: number) {
+  const [size, setSize] = useState(_size);
 
   const sizeArr = [
     { value: '5', label: '5条/页' },
@@ -258,16 +187,62 @@ export default function TagList() {
     sizeArr.unshift({ value: `${size}`, label: `${size}条/页` });
   }
 
-  const fetcher = useFetcher();
+  return { size, sizeArr, setSize };
+}
 
-  const handleDelete = async (id: string) => {
-    await fetcher.submit(
-      { id },
-      {
-        method: 'delete',
-      },
+export default function TagList() {
+  const nav = useNavigate();
+  const fetcher = useFetcher();
+  const data = useLoaderData<LoaderData>();
+  const { size, sizeArr, setSize } = useSize(data.size);
+
+  const renderAction = useCallback((data: Tag) => {
+    return (
+      <>
+        <TagModal data={data} />
+        <UnstyledButton
+          onClick={async () => {
+            await fetcher.submit({ id: `${data.id}` }, { method: 'delete' });
+          }}
+          sx={(theme) => {
+            return {
+              whiteSpace: 'nowrap',
+              fontSize: 14,
+              padding: 4,
+              margin: 4,
+              display: 'block',
+              color: theme.colors.red[6],
+            };
+          }}>
+          删除
+        </UnstyledButton>
+      </>
     );
-  };
+  }, []);
+
+  const columns = [
+    {
+      name: 'id',
+      header: 'ID',
+      width: 30,
+    },
+    {
+      name: 'name',
+      header: '名称',
+      width: 200,
+    },
+    {
+      name: 'description',
+      header: '描述',
+      width: 200,
+    },
+    {
+      name: 'action',
+      header: '操作',
+      width: 120,
+      render: renderAction,
+    },
+  ];
 
   return (
     <>
@@ -285,7 +260,7 @@ export default function TagList() {
           <Title order={5} style={{ lineHeight: '36px' }}>
             标签列表
           </Title>
-          <CreateModal />
+          <TagModal />
         </Group>
         <Divider mt="md" mb="lg" />
         <Box style={{ position: 'relative', minHeight: 500 }}>
@@ -305,10 +280,11 @@ export default function TagList() {
             }}>
             <thead style={{ display: 'table', width: '100%' }}>
               <tr>
-                <th style={{ width: 30 }}>ID</th>
-                <th style={{ width: 200 }}>名称</th>
-                <th>描述</th>
-                <th style={{ width: 120 }}>操作</th>
+                {columns?.map((v) => (
+                  <th key={v.name} style={{ width: v.width }}>
+                    {v.header}
+                  </th>
+                ))}
               </tr>
             </thead>
             {data.data.length > 0 && (
@@ -321,26 +297,11 @@ export default function TagList() {
                 }}>
                 {data.data?.map((tag) => (
                   <tr key={tag.id} style={{ display: 'table', width: '100%' }}>
-                    <td style={{ width: 30 }}>{tag.id}</td>
-                    <td style={{ width: 200 }}>{tag.name}</td>
-                    <td>{tag.description}</td>
-                    <td style={{ width: 120 }}>
-                      <DetailModal itemId={`${tag.id}`} />
-                      <UnstyledButton
-                        onClick={() => handleDelete(`${tag.id}`)}
-                        sx={(theme) => {
-                          return {
-                            whiteSpace: 'nowrap',
-                            fontSize: 14,
-                            padding: 4,
-                            margin: 4,
-                            display: 'block',
-                            color: theme.colors.red[6],
-                          };
-                        }}>
-                        删除
-                      </UnstyledButton>
-                    </td>
+                    {columns?.map((v) => (
+                      <td key={v.name} style={{ width: v.width }}>
+                        {v.render ? v.render(tag) : tag[v.name as keyof Tag]}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
@@ -361,6 +322,13 @@ export default function TagList() {
           <Stack align="flex-end" m="xl">
             {!!data.total && (
               <Center>
+                <Pagination
+                  total={Math.ceil(data.total / data.size)}
+                  page={data.page}
+                  onChange={(page) => {
+                    nav(`?size=${size}&page=${page}`);
+                  }}
+                />
                 <Select
                   mx="md"
                   size="xs"
@@ -375,13 +343,6 @@ export default function TagList() {
                   transitionDuration={80}
                   transitionTimingFunction="ease"
                 />
-                <Pagination
-                  total={Math.ceil(data.total / data.size)}
-                  page={data.page}
-                  onChange={(page) => {
-                    nav(`?size=${size}&page=${page}`);
-                  }}
-                />
               </Center>
             )}
           </Stack>
@@ -395,35 +356,34 @@ export const action: ActionFunction = async ({ request }) => {
   const method = request.method;
   const user = await checkAuth(request);
   const session = await getSession(request.headers.get('cookie'));
+
   const formData = await request.formData();
+  const id = Number(formData.get('id'));
+  const name = formData.get('name') as string;
+  const description = formData.get('description') as string;
 
-  if (method === 'DELETE') {
-    const id = Number(formData.get('id') as string);
-
-    const tag = await db.tag.findUnique({ where: { id: id } });
-
-    if (!tag || tag.accountId !== user.id) {
-      setErrorMessage(session, '删除失败，标签不存在!');
+  const message = {
+    error: async (message: string) => {
+      setErrorMessage(session, message);
       return json(
         { ok: false },
         {
           headers: { 'Set-Cookie': await commitSession(session) },
         },
       );
-    } else {
-      await db.tag.delete({ where: { id: id } });
-      setSuccessMessage(session, '删除成功');
+    },
+    success: async (message: string, data: any = {}) => {
+      setSuccessMessage(session, message);
       return json(
-        { ok: true },
+        { ok: true, data },
         {
           headers: { 'Set-Cookie': await commitSession(session) },
         },
       );
-    }
-  } else if (method === 'POST') {
-    const name = formData.get('name') as string;
-    const description = formData.get('description') as string;
+    },
+  };
 
+  const createTag = async () => {
     if (name) {
       await db.tag.create({
         data: {
@@ -432,23 +392,49 @@ export const action: ActionFunction = async ({ request }) => {
           author: { connect: { id: user.id } },
         },
       });
-
-      setSuccessMessage(session, '新建成功!');
-      return json(
-        { ok: true },
-        {
-          headers: { 'Set-Cookie': await commitSession(session) },
-        },
-      );
+      return await message.success('新建成功!');
     } else {
-      setErrorMessage(session, '请确保标签的名称有值!');
-      return json(
-        { ok: false },
-        {
-          headers: { 'Set-Cookie': await commitSession(session) },
-        },
-      );
+      return await message.error('请确保标签的名称有值!');
     }
+  };
+
+  const updateTag = async () => {
+    const tag = await db.tag.findUnique({ where: { id: id } });
+    if (!tag || tag.accountId !== user.id) {
+      return await message.error('保存失败，标签不存在!');
+    } else {
+      await db.tag.update({
+        where: { id: id },
+        data: {
+          name,
+          description,
+        },
+      });
+      return await message.success('保存成功');
+    }
+  };
+
+  const deleteTag = async () => {
+    const tag = await db.tag.findUnique({ where: { id: id } });
+
+    if (!tag || tag.accountId !== user.id) {
+      return await message.error('删除失败，标签不存在!');
+    } else {
+      await db.tag.delete({ where: { id: id } });
+      return await message.success('删除成功');
+    }
+  };
+
+  if (method === 'DELETE') {
+    return await deleteTag();
+  }
+
+  if (method === 'POST' && !id) {
+    return await createTag();
+  }
+
+  if (method === 'POST' && id) {
+    return await updateTag();
   }
 };
 

@@ -13,7 +13,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import type { Article } from '@prisma/client';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
@@ -123,6 +123,60 @@ export default function ArticleList() {
     );
   };
 
+  const renderAction = useCallback((data: Article) => {
+    return (
+      <>
+        <UnstyledButton
+          onClick={() => nav(`${data.id}`)}
+          sx={(theme) => {
+            return {
+              whiteSpace: 'nowrap',
+              fontSize: 14,
+              padding: 4,
+              margin: 4,
+              display: 'block',
+              color: theme.colors.blue[6],
+            };
+          }}>
+          查看详情
+        </UnstyledButton>
+        <UnstyledButton
+          onClick={() => handleDelete(`${data.id}`)}
+          sx={(theme) => {
+            return {
+              whiteSpace: 'nowrap',
+              fontSize: 14,
+              padding: 4,
+              margin: 4,
+              display: 'block',
+              color: theme.colors.red[6],
+            };
+          }}>
+          删除
+        </UnstyledButton>
+      </>
+    );
+  }, []);
+
+  const columns = [
+    {
+      name: 'id',
+      header: 'ID',
+      width: '15%',
+    },
+    {
+      name: 'title',
+      header: '标题',
+      width: '70%',
+    },
+    {
+      name: 'action',
+      header: '操作',
+      width: '15%',
+      render: renderAction,
+    },
+  ];
+
   return (
     <>
       <Box
@@ -162,10 +216,11 @@ export default function ArticleList() {
             }}>
             <thead style={{ display: 'table', width: '100%' }}>
               <tr>
-                <th style={{ width: 30 }}>ID</th>
-                <th style={{ width: 200 }}>标题</th>
-                <th>内容</th>
-                <th style={{ width: 120 }}>操作</th>
+                {columns?.map((v) => (
+                  <th key={v.name} style={{ width: v.width }}>
+                    {v.header}
+                  </th>
+                ))}
               </tr>
             </thead>
             {data.data.length > 0 && (
@@ -180,39 +235,13 @@ export default function ArticleList() {
                   <tr
                     key={article.id}
                     style={{ display: 'table', width: '100%' }}>
-                    <td style={{ width: 30 }}>{article.id}</td>
-                    <td style={{ width: 200 }}>{article.title}</td>
-                    <td>{article.content}</td>
-                    <td style={{ width: 120 }}>
-                      <UnstyledButton
-                        onClick={() => nav(`${article.id}`)}
-                        sx={(theme) => {
-                          return {
-                            whiteSpace: 'nowrap',
-                            fontSize: 14,
-                            padding: 4,
-                            margin: 4,
-                            display: 'block',
-                            color: theme.colors.blue[6],
-                          };
-                        }}>
-                        查看详情
-                      </UnstyledButton>
-                      <UnstyledButton
-                        onClick={() => handleDelete(`${article.id}`)}
-                        sx={(theme) => {
-                          return {
-                            whiteSpace: 'nowrap',
-                            fontSize: 14,
-                            padding: 4,
-                            margin: 4,
-                            display: 'block',
-                            color: theme.colors.red[6],
-                          };
-                        }}>
-                        删除
-                      </UnstyledButton>
-                    </td>
+                    {columns?.map((v) => (
+                      <td key={v.name} style={{ width: v.width }}>
+                        {v.render
+                          ? v.render(article)
+                          : article[v.name as keyof Article]}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
