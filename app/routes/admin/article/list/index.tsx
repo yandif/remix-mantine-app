@@ -262,6 +262,13 @@ export default function ArticleList() {
           <Stack align="flex-end" m="xl">
             {!!data.total && (
               <Center>
+                <Pagination
+                  total={Math.ceil(data.total / data.size)}
+                  page={data.page}
+                  onChange={(page) => {
+                    nav(`?size=${size}&page=${page}`);
+                  }}
+                />
                 <Select
                   mx="md"
                   size="xs"
@@ -275,13 +282,6 @@ export default function ArticleList() {
                   transition="pop-top-left"
                   transitionDuration={80}
                   transitionTimingFunction="ease"
-                />
-                <Pagination
-                  total={Math.ceil(data.total / data.size)}
-                  page={data.page}
-                  onChange={(page) => {
-                    nav(`?size=${size}&page=${page}`);
-                  }}
                 />
               </Center>
             )}
