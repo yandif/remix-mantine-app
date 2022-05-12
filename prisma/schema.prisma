@@ -15,7 +15,8 @@ model Account {
   passwordHash String
   isSuper      Int      @default(0) @map("is_super")
 
-  Article Article[]
+  articles Article[]
+  tags     Tag[]
 }
 
 model Article {
@@ -24,6 +25,17 @@ model Article {
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String
   content   String   @db.Text
+
+  author    Account @relation(fields: [accountId], references: [id])
+  accountId Int
+}
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  name        String
+  description String   @db.Text
 
   author    Account @relation(fields: [accountId], references: [id])
   accountId Int

@@ -15,7 +15,7 @@ import {
 import type { Article } from '@prisma/client';
 import { useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
-import { json, redirect, useFetcher, useLoaderData, useNavigate } from 'remix';
+import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
 
 import ErrorMessage from '~/components/ErrorMessage';
@@ -180,7 +180,7 @@ export default function ArticleList() {
                   <tr
                     key={article.id}
                     style={{ display: 'table', width: '100%' }}>
-                    <td style={{ width: 200 }}>{article.id}</td>
+                    <td style={{ width: 30 }}>{article.id}</td>
                     <td style={{ width: 200 }}>{article.title}</td>
                     <td>{article.content}</td>
                     <td style={{ width: 120 }}>
