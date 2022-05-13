@@ -115,14 +115,16 @@ export function LinksGroup({
     const activePathName = pathname?.endsWith('/')
       ? base + pathname
       : base + pathname + '/';
-    return RealPathName === activePathName
-      ? `${c} ${classes.controlActive}`
-      : c;
+    const isActive =
+      RealPathName === activePathName ? `${c} ${classes.controlActive}` : c;
+
+    return isActive;
   };
 
   const initOpened = (hasLinks ? links : [])?.some(
     (_link) => location.pathname === base + _link.link,
   );
+
   const [opened, setOpened] = useState(initiallyOpened || initOpened || false);
   const items = (hasLinks ? links : []).map((_link) => (
     <Text

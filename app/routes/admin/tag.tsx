@@ -33,6 +33,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import useAdminStore from '~/stores/admin';
 
 interface CountTag extends Tag {
   _count: {
@@ -211,6 +212,11 @@ function useSize(_size: number) {
 }
 
 export default function TagList() {
+  const { setHeaderTitle } = useAdminStore();
+  useEffect(() => {
+    setHeaderTitle('标签列表');
+  }, []);
+
   const nav = useNavigate();
   const fetcher = useFetcher();
   const data = useLoaderData<LoaderData>();

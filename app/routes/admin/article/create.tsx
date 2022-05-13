@@ -25,6 +25,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/editor.css';
 
 export const links: LinksFunction = () => {
@@ -32,6 +33,10 @@ export const links: LinksFunction = () => {
 };
 
 const CreateArticle: FC = () => {
+  const { setHeaderTitle } = useAdminStore();
+  useEffect(() => {
+    setHeaderTitle('新建文章');
+  }, []);
   const fetcher = useFetcher();
 
   const form = useForm({

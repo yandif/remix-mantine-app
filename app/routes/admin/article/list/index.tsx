@@ -13,7 +13,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import type { Article } from '@prisma/client';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
@@ -27,6 +27,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import useAdminStore from '~/stores/admin';
 
 type LoaderData = {
   ok: boolean;
@@ -96,6 +97,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function ArticleList() {
+  const { setHeaderTitle } = useAdminStore();
+  useEffect(() => {
+    setHeaderTitle('文章列表');
+  }, []);
   const data = useLoaderData<LoaderData>();
 
   const nav = useNavigate();

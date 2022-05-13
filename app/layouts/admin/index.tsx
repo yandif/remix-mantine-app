@@ -19,7 +19,7 @@ import MantineProvider from '~/components/MantineProvider';
 import { ToggleColorSchemeIcon } from '~/components/ToggleColorScheme';
 import useAdminStore from '~/stores/admin';
 
-import { LinksGroup } from './navbar/NavbarLinksGroup';
+import { LinksGroup } from './LinksGroup';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';

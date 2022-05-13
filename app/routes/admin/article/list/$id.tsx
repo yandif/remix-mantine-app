@@ -26,6 +26,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/editor.css';
 
 export const links: LinksFunction = () => {
@@ -55,6 +56,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export default function EditArticle() {
+  const { setHeaderTitle } = useAdminStore();
+  useEffect(() => {
+    setHeaderTitle('文章详情');
+  }, []);
   const data = useLoaderData<LoaderData>();
   const { article } = data;
   const fetcher = useFetcher();

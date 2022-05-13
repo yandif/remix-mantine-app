@@ -54,11 +54,12 @@ export const mockdata = [
 
 export default function AdminLayoutWrapper() {
   const user = useLoaderData<Account>();
-  const { setUser, setSizeName, setMenus } = useAdminStore();
+  const { setUser, setSizeName, setMenus, setHeaderTitle } = useAdminStore();
   useEffect(() => {
     setUser(user);
     setSizeName('管理界面');
     setMenus(mockdata);
+    setHeaderTitle('');
   }, []);
   return <AdminLayout />;
 }
