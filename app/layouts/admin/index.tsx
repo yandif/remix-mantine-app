@@ -5,31 +5,31 @@ import {
   createStyles,
   Group,
   MediaQuery,
+  Menu,
   Navbar,
   ScrollArea,
   Text,
   Title,
+  UnstyledButton,
 } from '@mantine/core';
-import { Outlet } from 'remix';
-import { ChevronRight } from 'tabler-icons-react';
+import { Link, Outlet } from 'remix';
+import { ChevronDown, Logout, Settings } from 'tabler-icons-react';
 
 import MantineProvider from '~/components/MantineProvider';
 import { ToggleColorSchemeIcon } from '~/components/ToggleColorScheme';
+import useAdminStore from '~/stores/admin';
 
-import { mockdata, site, user } from './data';
 import { LinksGroup } from './navbar/NavbarLinksGroup';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
-  const backgroundColor = isDark ? theme.colors.dark[7] : theme.colors.gray[0];
+  const backgroundColor = isDark ? theme.colors.dark[7] : theme.white;
+
   const color = isDark ? theme.colors.dark[0] : theme.colors.gray[7];
-  const border = `1px solid ${
-    isDark ? theme.colors.dark[4] : theme.colors.gray[3]
-  }`;
 
   return {
     main: {
-      backgroundColor,
+      backgroundColor: 'red',
       color,
       width: '100vw',
       height: '100vh',
@@ -44,65 +44,83 @@ const useStyles = createStyles((theme) => {
     },
 
     header: {
+      height: 60,
       padding: theme.spacing.md,
-      paddingTop: 0,
-      marginLeft: -theme.spacing.md,
-      marginRight: -theme.spacing.md,
-      borderBottom: border,
     },
 
     links: {
       padding: theme.spacing.xs,
-      marginLeft: -theme.spacing.md,
-      marginRight: -theme.spacing.md,
     },
 
-    footer: {
+    adminHeader: {
+      height: 60,
       padding: theme.spacing.md,
-      paddingBottom: 0,
-      marginLeft: -theme.spacing.md,
-      marginRight: -theme.spacing.md,
-      borderTop: border,
+      backgroundColor,
+      color,
     },
   };
 });
 
 function AdminLayout() {
   const { classes } = useStyles();
+  const { headerTitle, sizeName, user, menus } = useAdminStore();
 
-  const links = mockdata.map((item) => (
-    <LinksGroup {...item} key={item.label} base="/admin" />
-  ));
+  if (!user) return null;
+
   return (
     <>
       <Box className={classes.main}>
-        <Navbar width={{ sm: 200 }} p="md" className={classes.navbar}>
+        <Navbar
+          width={{ sm: 200 }}
+          p="md"
+          className={classes.navbar}
+          px={0}
+          py={0}>
           <Navbar.Section className={classes.header}>
             <Center>
-              <Title order={4}>{site.title}</Title>
+              <Title order={4}>{sizeName}</Title>
               <ToggleColorSchemeIcon ml="md" />
             </Center>
           </Navbar.Section>
 
           <Navbar.Section grow className={classes.links} component={ScrollArea}>
-            {links}
-          </Navbar.Section>
-
-          <Navbar.Section className={classes.footer}>
-            <Group spacing={7}>
-              <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
-                <Avatar size={30} radius="xl" color="cyan">
-                  {user?.name?.charAt(0)}
-                </Avatar>
-              </MediaQuery>
-              <Text weight={500} size="sm" mr={3}>
-                {user?.name}
-              </Text>
-              <ChevronRight size={12} />
-            </Group>
+            {menus.map((item) => (
+              <LinksGroup {...item} key={item.label} base="/admin" />
+            ))}
           </Navbar.Section>
         </Navbar>
         <Box pl="200px">
+          <Group position="apart" className={classes.adminHeader}>
+            <Title order={5}>{headerTitle}</Title>
+            <Menu
+              size={170}
+              placement="end"
+              transition="pop-top-right"
+              trigger="hover"
+              delay={200}
+              control={
+                <UnstyledButton>
+                  <Group spacing={7}>
+                    <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                      <Avatar size={30} radius="xl" color="cyan"></Avatar>
+                    </MediaQuery>
+                    <Text weight={500} size="sm" mr={3}>
+                      {user?.username}
+                    </Text>
+                    <ChevronDown size={12} />
+                  </Group>
+                </UnstyledButton>
+              }>
+              <Menu.Label>设置</Menu.Label>
+              <Menu.Item icon={<Settings size={14} />}>个人中心</Menu.Item>
+              <Menu.Item
+                component={Link}
+                to="/logout"
+                icon={<Logout size={14} />}>
+                登出
+              </Menu.Item>
+            </Menu>
+          </Group>
           <Outlet />
         </Box>
       </Box>

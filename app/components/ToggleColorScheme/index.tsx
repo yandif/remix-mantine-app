@@ -2,7 +2,7 @@ import type { ActionIconProps } from '@mantine/core';
 import { ActionIcon } from '@mantine/core';
 import { MoonStars, Sun } from 'tabler-icons-react';
 
-import { useThemeStore } from '~/stores';
+import useThemeStore from '~/stores/theme';
 
 export function ToggleColorSchemeIcon(
   props: Omit<ActionIconProps<'button'>, 'title'>,

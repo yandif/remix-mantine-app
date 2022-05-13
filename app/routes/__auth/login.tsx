@@ -13,11 +13,12 @@ import type { ActionFunction, LoaderFunction } from 'remix';
 import { Form, json, Link, useActionData } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
-import { useThemeStore } from '~/stores';
+import useThemeStore from '~/stores/theme';
 
 export default function Login() {
   const actionData = useActionData();
   const { colorScheme, setColorScheme } = useThemeStore();
+
   type FormData = { username?: string; password?: string };
   const ref = useRef<HTMLFormElement>(null);
 

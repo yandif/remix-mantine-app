@@ -1,7 +1,7 @@
 import type { ColorScheme } from '@mantine/core';
 import create from 'zustand';
 
-type AdminLayoutState = {
+type ThemeState = {
   opened: boolean;
   colorScheme: ColorScheme;
   toggle: () => void;
@@ -9,7 +9,7 @@ type AdminLayoutState = {
   toggleColorScheme: () => void;
 };
 
-const useThemeStore = create<AdminLayoutState>((set) => ({
+const useThemeStore = create<ThemeState>((set) => ({
   opened: false,
   colorScheme: 'light',
   toggle: () => set((state) => ({ opened: !state.opened })),

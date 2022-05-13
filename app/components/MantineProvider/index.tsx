@@ -4,7 +4,7 @@ import {
 } from '@mantine/core';
 import type { FC } from 'react';
 
-import { useThemeStore } from '~/stores';
+import useThemeStore from '~/stores/theme';
 
 const MantineProvider: FC = ({ children }) => {
   const { colorScheme, toggleColorScheme } = useThemeStore();

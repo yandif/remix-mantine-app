@@ -15,7 +15,7 @@ import { Form, json, Link, useActionData, useNavigate } from 'remix';
 
 import { authenticator } from '~/services/auth/auth.server';
 import { db } from '~/services/database/db.server';
-import { useThemeStore } from '~/stores';
+import useThemeStore from '~/stores/theme';
 import { auth } from '~/utils';
 
 export default function Signup() {
