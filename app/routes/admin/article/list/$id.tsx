@@ -2,16 +2,17 @@ import {
   Box,
   Button,
   Divider,
+  Grid,
   Group,
   InputWrapper,
+  MultiSelect,
   TextInput,
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { Article } from '@prisma/client';
+import type { Article, Tag } from '@prisma/client';
 import dayjs from 'dayjs';
-import { identity } from 'lodash';
-import type { FC } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import type { ActionFunction, LinksFunction, LoaderFunction } from 'remix';
 import { json, redirect, useFetcher, useLoaderData } from 'remix';
 
@@ -41,6 +42,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const article = await db.article.findUnique({
     where: { id },
+    include: {
+      tag: true,
+    },
   });
 
   if (!article || article.accountId !== user.id)
@@ -59,6 +63,7 @@ export default function EditArticle() {
     initialValues: {
       title: article.title,
       content: article.content,
+      tag: (article as any)?.tag.map((v: Tag) => `${v.id}`),
     },
 
     validate: {
@@ -68,13 +73,68 @@ export default function EditArticle() {
     },
   });
 
+  /** 选择标签👇 */
+  const tagFetcher = useFetcher();
+  const createTagFetcher = useFetcher();
+  const [tags, setTags] = useState<any>([]);
+
+  const queryTags = async () => {
+    await tagFetcher.load('/admin/tag?size=1000&page=1');
+  };
+
+  useEffect(() => {
+    queryTags();
+  }, []);
+
+  useEffect(() => {
+    if (tagFetcher?.data) {
+      const data = tagFetcher?.data?.data?.map((v: Tag) => {
+        const { name, id, description } = v;
+        return { label: name, value: `${id}`, description };
+      });
+      setTags(data);
+    }
+  }, [tagFetcher?.data]);
+
+  useEffect(() => {
+    if (createTagFetcher?.data?.data) {
+      const { name, id, description } = createTagFetcher.data.data;
+
+      setTags([{ label: name, value: `${id}`, description }, ...tags]);
+
+      form.setFieldValue(
+        'tag',
+        form.values.tag.map((v: string) => {
+          if (v === name) {
+            return `${id}`;
+          } else {
+            return v;
+          }
+        }),
+      );
+    }
+  }, [createTagFetcher.data]);
+
+  interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+    label: string;
+  }
+
+  const TagItem = forwardRef<HTMLDivElement, ItemProps>(
+    // eslint-disable-next-line react/prop-types
+    ({ label, ...others }: ItemProps, ref) => (
+      <div ref={ref} {...others}>
+        {label}
+      </div>
+    ),
+  );
+  /** 选择标签👆 */
+
   return (
     <Box
       sx={(theme) => {
         const isDark = theme.colorScheme === 'dark';
 
         return {
-          margin: '16px',
           padding: theme.spacing.md,
           backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
         };
@@ -87,20 +147,54 @@ export default function EditArticle() {
       <Divider mt="md" mb="lg" />
       <Box mx="xl" my="md" style={{ position: 'relative', minHeight: 500 }}>
         <fetcher.Form>
-          <TextInput
-            mb="md"
-            required
-            label="标题"
-            placeholder="文章标题"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('title')}
-          />
-
+          <Grid gutter="xl">
+            <Grid.Col span={6}>
+              <TextInput
+                mb="md"
+                required
+                label="标题"
+                placeholder="文章标题"
+                {...form.getInputProps('title')}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <MultiSelect
+                mb="md"
+                label="标签"
+                data={tags}
+                placeholder="文章标签"
+                searchable
+                creatable
+                maxSelectedValues={4}
+                getCreateLabel={(query) => `+ 新建 ${query}`}
+                onCreate={async (query) => {
+                  await createTagFetcher.submit(
+                    { name: query },
+                    {
+                      action: '/admin/tag',
+                      method: 'post',
+                    },
+                  );
+                }}
+                itemComponent={TagItem}
+                filter={(value, selected, item) => {
+                  if (selected) return false;
+                  const filterName = item?.label
+                    ?.toLowerCase()
+                    ?.includes(value?.toLowerCase()?.trim());
+                  const filterDescription = item?.description
+                    ?.toLowerCase()
+                    ?.includes(value?.toLowerCase()?.trim());
+                  return filterName || filterDescription;
+                }}
+                {...form.getInputProps('tag')}
+              />
+            </Grid.Col>
+          </Grid>
           <InputWrapper
             mb="md"
             required
             label="内容"
-            style={{ maxWidth: 800 }}
             {...form.getInputProps('content')}>
             <EngineDemo
               placeholder="文章内容"
@@ -113,14 +207,17 @@ export default function EditArticle() {
               const res = form.validate();
               if (
                 form.values.title === article.title &&
-                form.values.content === article.content
+                form.values.content === article.content &&
+                form.values.tag.toString() ===
+                  (article as any)?.tag.map((v: Tag) => `${v.id}`).toString()
               ) {
                 return;
               }
 
               if (!res.hasErrors) {
+                const { title, tag, content } = form.values;
                 await fetcher.submit(
-                  { id: `${article.id}`, ...form.values },
+                  { id: `${article.id}`, title, content, tag: tag.toString() },
                   {
                     method: 'post',
                   },
@@ -142,6 +239,7 @@ export const action: ActionFunction = async ({ request }) => {
   const id = Number(formData.get('id'));
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
+  const tag = (formData.get('tag') as string)?.split(',')?.filter((v) => !!v);
 
   const e = async (message: string) => {
     setErrorMessage(session, message);
@@ -152,17 +250,25 @@ export const action: ActionFunction = async ({ request }) => {
   };
 
   try {
-    const findArticle = await db.article.findUnique({ where: { id } });
+    const findArticle = await db.article.findUnique({
+      where: { id },
+      include: { tag: true },
+    });
     if (!findArticle || findArticle.accountId !== user.id) {
       return await e('文章不存在');
     }
 
     if (title && content) {
+      console.log(tag);
       const article = await db.article.update({
         where: { id },
         data: {
           title,
           content,
+          tag: {
+            disconnect: findArticle.tag.map((v) => ({ id: v.id })),
+            connect: tag.map((v) => ({ id: Number(v) })),
+          },
         },
       });
       setSuccessMessage(session, '修改成功!');

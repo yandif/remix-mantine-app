@@ -184,7 +184,6 @@ export default function ArticleList() {
           const isDark = theme.colorScheme === 'dark';
 
           return {
-            margin: '16px',
             padding: theme.spacing.md,
             backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
           };

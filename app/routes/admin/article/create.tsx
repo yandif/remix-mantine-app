@@ -2,13 +2,17 @@ import {
   Box,
   Button,
   Divider,
+  Grid,
   Group,
   InputWrapper,
+  MultiSelect,
   TextInput,
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import type { Tag } from '@prisma/client';
 import type { FC } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import type { ActionFunction, LinksFunction } from 'remix';
 import { json, redirect, useFetcher } from 'remix';
 
@@ -34,6 +38,7 @@ const CreateArticle: FC = () => {
     initialValues: {
       title: '',
       content: '',
+      tag: [] as string[],
     },
 
     validate: {
@@ -43,13 +48,68 @@ const CreateArticle: FC = () => {
     },
   });
 
+  /** 选择标签👇 */
+  const tagFetcher = useFetcher();
+  const createTagFetcher = useFetcher();
+  const [tags, setTags] = useState<any>([]);
+
+  const queryTags = async () => {
+    await tagFetcher.load('/admin/tag?size=1000&page=1');
+  };
+
+  useEffect(() => {
+    queryTags();
+  }, []);
+
+  useEffect(() => {
+    if (tagFetcher?.data) {
+      const data = tagFetcher?.data?.data?.map((v: Tag) => {
+        const { name, id, description } = v;
+        return { label: name, value: `${id}`, description };
+      });
+      setTags(data);
+    }
+  }, [tagFetcher?.data]);
+
+  useEffect(() => {
+    if (createTagFetcher?.data?.data) {
+      const { name, id, description } = createTagFetcher.data.data;
+
+      setTags([{ label: name, value: `${id}`, description }, ...tags]);
+
+      form.setFieldValue(
+        'tag',
+        form.values.tag.map((v) => {
+          if (v === name) {
+            return `${id}`;
+          } else {
+            return v;
+          }
+        }),
+      );
+    }
+  }, [createTagFetcher.data]);
+
+  interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+    label: string;
+  }
+
+  const TagItem = forwardRef<HTMLDivElement, ItemProps>(
+    // eslint-disable-next-line react/prop-types
+    ({ label, ...others }: ItemProps, ref) => (
+      <div ref={ref} {...others}>
+        {label}
+      </div>
+    ),
+  );
+  /** 选择标签👆 */
+
   return (
     <Box
       sx={(theme) => {
         const isDark = theme.colorScheme === 'dark';
 
         return {
-          margin: '16px',
           padding: theme.spacing.md,
           backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
         };
@@ -60,22 +120,57 @@ const CreateArticle: FC = () => {
         </Title>
       </Group>
       <Divider mt="md" mb="lg" />
-      <Box mx="xl" my="md" style={{ position: 'relative', minHeight: 500 }}>
+      <Box mx="xl" my="md" style={{ position: 'relative' }}>
         <fetcher.Form>
-          <TextInput
-            mb="md"
-            required
-            label="标题"
-            placeholder="文章标题"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('title')}
-          />
+          <Grid gutter="xl">
+            <Grid.Col span={6}>
+              <TextInput
+                mb="md"
+                required
+                label="标题"
+                placeholder="文章标题"
+                {...form.getInputProps('title')}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <MultiSelect
+                mb="md"
+                label="标签"
+                data={tags}
+                placeholder="文章标签"
+                searchable
+                creatable
+                maxSelectedValues={4}
+                getCreateLabel={(query) => `+ 新建 ${query}`}
+                onCreate={async (query) => {
+                  await createTagFetcher.submit(
+                    { name: query },
+                    {
+                      action: '/admin/tag',
+                      method: 'post',
+                    },
+                  );
+                }}
+                itemComponent={TagItem}
+                filter={(value, selected, item) => {
+                  if (selected) return false;
+                  const filterName = item?.label
+                    ?.toLowerCase()
+                    ?.includes(value?.toLowerCase()?.trim());
+                  const filterDescription = item?.description
+                    ?.toLowerCase()
+                    ?.includes(value?.toLowerCase()?.trim());
+                  return filterName || filterDescription;
+                }}
+                {...form.getInputProps('tag')}
+              />
+            </Grid.Col>
+          </Grid>
 
           <InputWrapper
             mb="md"
             required
             label="内容"
-            style={{ maxWidth: 800 }}
             {...form.getInputProps('content')}>
             <EngineDemo
               placeholder="文章内容"
@@ -87,9 +182,17 @@ const CreateArticle: FC = () => {
             onClick={async () => {
               const res = form.validate();
               if (!res.hasErrors) {
-                await fetcher.submit(form.values, {
-                  method: 'post',
-                });
+                const { title, tag, content } = form.values;
+                await fetcher.submit(
+                  {
+                    title,
+                    content,
+                    tag: tag.toString(),
+                  },
+                  {
+                    method: 'post',
+                  },
+                );
               }
             }}>
             提交
@@ -107,6 +210,7 @@ export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
   const formData = await request.formData();
   const title = formData.get('title') as string;
+  const tag = (formData.get('tag') as string)?.split(',')?.filter((v) => !!v);
   const content = formData.get('content') as string;
 
   if (title && content) {
@@ -114,9 +218,11 @@ export const action: ActionFunction = async ({ request }) => {
       data: {
         title,
         content,
+        tag: { connect: tag.map((v) => ({ id: Number(v) })) },
         author: { connect: { id: user.id } },
       },
     });
+
     setSuccessMessage(session, '提交成功!');
     return redirect(`/admin/article/list/${article.id}`, {
       headers: { 'Set-Cookie': await commitSession(session) },

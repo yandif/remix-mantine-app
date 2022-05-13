@@ -26,6 +26,7 @@ model Article {
   title     String
   content   String   @db.Text
 
+  tag       Tag[]
   author    Account @relation(fields: [accountId], references: [id])
   accountId Int
 }
@@ -37,6 +38,7 @@ model Tag {
   name        String
   description String   @db.Text
 
-  author    Account @relation(fields: [accountId], references: [id])
+  article   Article[]
+  author    Account   @relation(fields: [accountId], references: [id])
   accountId Int
 }

@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   Divider,
+  Grid,
   Group,
   Modal,
   Pagination,
@@ -33,9 +34,15 @@ import {
   setSuccessMessage,
 } from '~/services/message/message.server';
 
+interface CountTag extends Tag {
+  _count: {
+    article: number;
+  };
+}
+
 type LoaderData = {
   ok: boolean;
-  data: Tag[];
+  data: CountTag[];
   page: number;
   size: number;
   total: number;
@@ -53,22 +60,35 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (!(size > 0)) throw new Error('size 应该大于零！');
   if (!(page > 0)) throw new Error('page 应该大于零！');
 
-  const selectOption = {
-    where: { author: { id: user.id } },
+  const whereOption = {
+    where: {
+      author: { id: user.id },
+    },
   };
 
-  const total = await (await db.tag.findMany(selectOption)).length;
+  const total = await await db.tag.count(whereOption);
 
   if (page > Math.ceil(total / size) && total !== 0)
     throw new Error('page 太大了！');
 
   const findTag = await db.tag.findMany({
-    ...selectOption,
+    ...whereOption,
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+      accountId: true,
+      _count: {
+        select: { article: true },
+      },
+    },
     skip: (page - 1) * size,
     take: size,
     orderBy: [
       {
-        updatedAt: 'desc',
+        createdAt: 'desc',
       },
     ],
   });
@@ -196,7 +216,7 @@ export default function TagList() {
   const data = useLoaderData<LoaderData>();
   const { size, sizeArr, setSize } = useSize(data.size);
 
-  const renderAction = useCallback((data: Tag) => {
+  const renderAction = useCallback((data: CountTag) => {
     return (
       <>
         <TagModal data={data} />
@@ -237,6 +257,12 @@ export default function TagList() {
       width: 200,
     },
     {
+      name: 'article',
+      header: '文章',
+      width: 120,
+      render: (data: CountTag) => data._count.article,
+    },
+    {
       name: 'action',
       header: '操作',
       width: 120,
@@ -251,34 +277,40 @@ export default function TagList() {
           const isDark = theme.colorScheme === 'dark';
 
           return {
-            margin: '16px',
-            padding: theme.spacing.md,
+            height: '100vh',
             backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
           };
         }}>
-        <Group position="apart">
+        <Group m="md" position="apart">
           <Title order={5} style={{ lineHeight: '36px' }}>
             标签列表
           </Title>
           <TagModal />
         </Group>
         <Divider mt="md" mb="lg" />
-        <Box style={{ position: 'relative', minHeight: 500 }}>
+        <Box style={{ position: 'relative', height: '100%' }}>
           <Table
             highlightOnHover
             horizontalSpacing="xl"
             verticalSpacing="sm"
             sx={() => {
               return {
+                height: '100%',
                 'tbody::-webkit-scrollbar': {
                   display: 'none',
                 },
+                thead: { display: 'table', width: '100%' },
                 tbody: {
                   scrollbarWidth: 'none',
+                  width: '100%',
+                  height: '100%',
+                  overflow: 'auto',
+                  display: 'block',
+                  tr: { display: 'table', width: '100%' },
                 },
               };
             }}>
-            <thead style={{ display: 'table', width: '100%' }}>
+            <thead>
               <tr>
                 {columns?.map((v) => (
                   <th key={v.name} style={{ width: v.width }}>
@@ -288,15 +320,9 @@ export default function TagList() {
               </tr>
             </thead>
             {data.data.length > 0 && (
-              <tbody
-                style={{
-                  width: '100%',
-                  height: 'calc(100vh - 320px)',
-                  overflow: 'auto',
-                  display: 'block',
-                }}>
+              <tbody>
                 {data.data?.map((tag) => (
-                  <tr key={tag.id} style={{ display: 'table', width: '100%' }}>
+                  <tr key={tag.id}>
                     {columns?.map((v) => (
                       <td key={v.name} style={{ width: v.width }}>
                         {v.render ? v.render(tag) : tag[v.name as keyof Tag]}
@@ -319,8 +345,9 @@ export default function TagList() {
               </Text>
             </Center>
           )}
-          <Stack align="flex-end" m="xl">
-            {!!data.total && (
+
+          {!!data.total && (
+            <Box style={{ float: 'right' }}>
               <Center>
                 <Pagination
                   total={Math.ceil(data.total / data.size)}
@@ -344,8 +371,8 @@ export default function TagList() {
                   transitionTimingFunction="ease"
                 />
               </Center>
-            )}
-          </Stack>
+            </Box>
+          )}
         </Box>
       </Box>
     </>
@@ -360,7 +387,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const id = Number(formData.get('id'));
   const name = formData.get('name') as string;
-  const description = formData.get('description') as string;
+  const description = (formData.get('description') as string) || '';
 
   const message = {
     error: async (message: string) => {
@@ -385,14 +412,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   const createTag = async () => {
     if (name) {
-      await db.tag.create({
+      const tag = await db.tag.create({
         data: {
           name,
           description,
           author: { connect: { id: user.id } },
         },
       });
-      return await message.success('新建成功!');
+      return await message.success('新建成功!', tag);
     } else {
       return await message.error('请确保标签的名称有值!');
     }
