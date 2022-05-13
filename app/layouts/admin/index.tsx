@@ -1,34 +1,39 @@
 import {
+  Avatar,
   Box,
   Center,
   createStyles,
+  Group,
+  MediaQuery,
   Navbar,
   ScrollArea,
+  Text,
   Title,
 } from '@mantine/core';
 import { Outlet } from 'remix';
-import {
-  Adjustments,
-  Backpack,
-  Folders,
-  Gauge,
-  Message2,
-  MessageDots,
-  Notes,
-  Tags,
-} from 'tabler-icons-react';
+import { ChevronRight } from 'tabler-icons-react';
 
 import MantineProvider from '~/components/MantineProvider';
 import { ToggleColorSchemeIcon } from '~/components/ToggleColorScheme';
 
+import { mockdata, site, user } from './data';
 import { LinksGroup } from './navbar/NavbarLinksGroup';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
-  const backgroundColor = isDark ? theme.colors.dark[6] : theme.white;
+  const backgroundColor = isDark ? theme.colors.dark[7] : theme.colors.gray[0];
+  const color = isDark ? theme.colors.dark[0] : theme.colors.gray[7];
+  const border = `1px solid ${
+    isDark ? theme.colors.dark[4] : theme.colors.gray[3]
+  }`;
+
   return {
     main: {
       backgroundColor,
+      color,
+      width: '100vw',
+      height: '100vh',
+      overflow: 'hidden',
     },
 
     navbar: {
@@ -43,10 +48,7 @@ const useStyles = createStyles((theme) => {
       paddingTop: 0,
       marginLeft: -theme.spacing.md,
       marginRight: -theme.spacing.md,
-      color: isDark ? theme.colors.gray[4] : theme.black,
-      borderBottom: `1px solid ${
-        isDark ? theme.colors.dark[4] : theme.colors.gray[3]
-      }`,
+      borderBottom: border,
     },
 
     links: {
@@ -56,36 +58,17 @@ const useStyles = createStyles((theme) => {
     },
 
     footer: {
+      padding: theme.spacing.md,
+      paddingBottom: 0,
       marginLeft: -theme.spacing.md,
       marginRight: -theme.spacing.md,
-      borderTop: `1px solid ${
-        isDark ? theme.colors.dark[4] : theme.colors.gray[3]
-      }`,
+      borderTop: border,
     },
   };
 });
 
 function AdminLayout() {
   const { classes } = useStyles();
-  const mockdata = [
-    { label: '看板', icon: Gauge, link: '/dashboard' },
-
-    { label: '公告管理', icon: MessageDots, link: '/announcement' },
-    { label: '分类管理', icon: Folders, link: '/category' },
-    { label: '标签管理', icon: Tags, link: '/tag' },
-    {
-      label: '文章管理',
-      icon: Notes,
-      initiallyOpened: true,
-      links: [
-        { label: '文章列表', link: '/article/list' },
-        { label: '写文章', link: '/article/create' },
-      ],
-    },
-    { label: '评论管理', icon: Message2, link: '/comment' },
-    { label: '反馈管理', icon: Backpack, link: '/feedback' },
-    { label: '系统设置', icon: Adjustments, link: '/setting' },
-  ];
 
   const links = mockdata.map((item) => (
     <LinksGroup {...item} key={item.label} base="/admin" />
@@ -96,7 +79,7 @@ function AdminLayout() {
         <Navbar width={{ sm: 200 }} p="md" className={classes.navbar}>
           <Navbar.Section className={classes.header}>
             <Center>
-              <Title order={4}> 管理界面</Title>
+              <Title order={4}>{site.title}</Title>
               <ToggleColorSchemeIcon ml="md" />
             </Center>
           </Navbar.Section>
@@ -106,7 +89,17 @@ function AdminLayout() {
           </Navbar.Section>
 
           <Navbar.Section className={classes.footer}>
-            1322278095@qq.com
+            <Group spacing={7}>
+              <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                <Avatar size={30} radius="xl" color="cyan">
+                  {user?.name?.charAt(0)}
+                </Avatar>
+              </MediaQuery>
+              <Text weight={500} size="sm" mr={3}>
+                {user?.name}
+              </Text>
+              <ChevronRight size={12} />
+            </Group>
           </Navbar.Section>
         </Navbar>
         <Box pl="200px">
