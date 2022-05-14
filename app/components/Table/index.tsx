@@ -1,153 +1,136 @@
-/* eslint-disable react/jsx-key */
-import { Box, createStyles, ScrollArea, Table } from '@mantine/core';
-import React, { useEffect, useRef, useState } from 'react';
-import { useTable } from 'react-table';
+import {
+  Box,
+  Center,
+  Group,
+  Pagination,
+  Select,
+  Table as DefaultTable,
+  Text,
+} from '@mantine/core';
+import { useState } from 'react';
+import { useNavigate } from 'remix';
+import { Box as BoxIcon } from 'tabler-icons-react';
 
-const useStyles = createStyles((theme) => ({
-  container: {
-    position: 'relative',
-    th: {
-      whiteSpace: 'nowrap',
-    },
-  },
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    background: '#fff',
-    zIndex: 1,
-  },
-  header: {
-    overflow: 'auto scroll',
-    width: '100%',
-  },
-  body: {
-    overflow: 'auto scroll',
-    width: '100%',
-    height: '100%',
-  },
-}));
+function useSize(_size: number) {
+  const [size, setSize] = useState(_size);
 
-const YTable = ({
-  columns,
-  data,
-  style,
+  const sizeArr = [
+    { value: '5', label: '5条/页' },
+    { value: '10', label: '10条/页' },
+    { value: '15', label: '15条/页' },
+    { value: '20', label: '20条/页' },
+  ];
+
+  if (![5, 10, 15, 20].includes(size)) {
+    sizeArr.unshift({ value: `${size}`, label: `${size}条/页` });
+  }
+
+  return { size, sizeArr, setSize };
+}
+
+export default function Table({
+  data = [],
+  columns = [],
+  pagination = {
+    total: 0,
+    size: 5,
+    page: 1,
+  },
+  bodyHeight = 'calc(100vh - 300px)',
 }: {
-  columns: any[];
   data: any[];
-  style: any;
-}) => {
-  const { classes } = useStyles();
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data,
-    });
-
-  /** 滚动逻辑 👇*/
-  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
-  const viewport = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    viewport?.current?.scrollTo({ left: scrollPosition.x });
-  }, [scrollPosition]);
-  /** 滚动逻辑 👆*/
-
-  const [widths, setWidths] = useState<number[]>();
-  const ref = useRef<HTMLTableSectionElement>(null);
-
-  useEffect(() => {
-    try {
-      const widthArr: number[] = [];
-      ref.current?.childNodes[0].childNodes.forEach((v: any) =>
-        widthArr.push(v?.offsetWidth as number),
-      );
-      console.log(widthArr);
-      setWidths(widthArr);
-    } catch (e) {
-      console.log(e);
-    }
-  }, [ref]);
-
+  columns: any[];
+  pagination: { total: number; size: number; page: number };
+  bodyHeight?: string;
+}) {
+  const nav = useNavigate();
+  const { size, sizeArr, setSize } = useSize(pagination.size);
+  const isEmpty = data?.length === 0;
   return (
-    <Box className={classes.container} style={style}>
-      <div className={classes.headerWrapper}>
-        <ScrollArea
-          className={classes.header}
-          styles={{
-            root: { '&::-webkit-scrollbar': { width: 0 } },
-            scrollbar: { display: 'none' },
-          }}
-          viewportRef={viewport}>
-          <Table {...getTableProps()}>
-            <colgroup>
-              {widths?.map((width) => {
-                return (
-                  <col
-                    key={width}
-                    style={{
-                      width: width,
-                      minWidth: width,
-                      maxWidth: width,
-                    }}></col>
-                );
-              })}
-            </colgroup>
-            {widths && (
-              <thead ref={ref}>
-                {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column) => (
-                      <th {...column.getHeaderProps()}>
-                        {column.render('Header')}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-            )}
-          </Table>
-        </ScrollArea>
-      </div>
-
-      <ScrollArea
-        className={classes.body}
-        styles={{
-          root: { '&::-webkit-scrollbar': { width: 0 } },
-          scrollbar: { zIndex: 2 },
-          thumb: { '&::before': { minWidth: 0 } },
-        }}
-        onScrollPositionChange={onScrollPositionChange}>
-        <Table {...getTableProps()} highlightOnHover>
-          <thead ref={ref}>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render('Header')}
-                  </th>
+    <Box style={{ position: 'relative' }}>
+      <DefaultTable
+        highlightOnHover
+        horizontalSpacing="xl"
+        verticalSpacing="sm"
+        sx={() => {
+          return {
+            'tbody::-webkit-scrollbar': {
+              display: 'none',
+            },
+            tbody: {
+              scrollbarWidth: 'none',
+            },
+          };
+        }}>
+        <thead style={{ display: 'table', width: '100%' }}>
+          <tr>
+            {columns?.map((v) => (
+              <th key={v.name} style={{ width: v.width }}>
+                {v.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        {!isEmpty && (
+          <tbody
+            style={{
+              width: '100%',
+              height: bodyHeight,
+              overflow: 'auto',
+              display: 'block',
+            }}>
+            {data?.map((item) => (
+              <tr key={item.id} style={{ display: 'table', width: '100%' }}>
+                {columns?.map((v) => (
+                  <td key={v.name} style={{ width: v.width }}>
+                    {v.render ? v.render(item) : item[v.name]}
+                  </td>
                 ))}
               </tr>
             ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
           </tbody>
-        </Table>
-      </ScrollArea>
+        )}
+      </DefaultTable>
+      {isEmpty && (
+        <Center
+          style={{
+            height: bodyHeight,
+            flexDirection: 'column',
+          }}>
+          <BoxIcon size={81} strokeWidth={1} color="#eee" />
+          <Text size="md" color="#bbb">
+            暂无数据
+          </Text>
+        </Center>
+      )}
+
+      {!!pagination.total && (
+        <Group position="right" my={12}>
+          <Center>
+            <Pagination
+              total={Math.ceil(pagination.total / pagination.size)}
+              page={pagination.page}
+              onChange={(page) => {
+                nav(`?size=${size}&page=${page}`);
+              }}
+            />
+            <Select
+              mx="md"
+              size="xs"
+              style={{ width: 100 }}
+              data={sizeArr}
+              value={`${size}`}
+              onChange={(v: string) => {
+                setSize(parseInt(v));
+                nav(`?size=${v}&page=1`);
+              }}
+              transition="pop-top-left"
+              transitionDuration={80}
+              transitionTimingFunction="ease"
+            />
+          </Center>
+        </Group>
+      )}
     </Box>
   );
-};
-
-export default YTable;
+}

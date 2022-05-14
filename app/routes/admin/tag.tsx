@@ -1,15 +1,11 @@
 import {
-  Box,
   Button,
-  Center,
+  createStyles,
   Divider,
   Group,
   Modal,
-  Pagination,
-  Select,
+  Paper,
   Stack,
-  Table,
-  Text,
   TextInput,
   Title,
   UnstyledButton,
@@ -19,10 +15,10 @@ import type { Tag } from '@prisma/client';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
-import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
-import { Box as BoxIcon } from 'tabler-icons-react';
+import { json, useFetcher, useLoaderData } from 'remix';
 
 import ErrorMessage from '~/components/ErrorMessage';
+import Table from '~/components/Table';
 import { db } from '~/server/database/db.server';
 import {
   commitSession,
@@ -192,33 +188,26 @@ const TagModal: FC<{ data?: any }> = ({ data }) => {
   );
 };
 
-function useSize(_size: number) {
-  const [size, setSize] = useState(_size);
+const useStyles = createStyles((theme) => {
+  const isDark = theme.colorScheme === 'dark';
 
-  const sizeArr = [
-    { value: '5', label: '5条/页' },
-    { value: '10', label: '10条/页' },
-    { value: '15', label: '15条/页' },
-    { value: '20', label: '20条/页' },
-  ];
+  return {
+    main: {
+      padding: '16px',
 
-  if (![5, 10, 15, 20].includes(size)) {
-    sizeArr.unshift({ value: `${size}`, label: `${size}条/页` });
-  }
-
-  return { size, sizeArr, setSize };
-}
+      backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
+    },
+  };
+});
 
 export default function TagList() {
   const { setHeaderTitle } = useAdminStore();
   useEffect(() => {
     setHeaderTitle('标签列表');
   }, []);
-
-  const nav = useNavigate();
+  const { classes } = useStyles();
   const fetcher = useFetcher();
   const data = useLoaderData<LoaderData>();
-  const { size, sizeArr, setSize } = useSize(data.size);
 
   const renderAction = useCallback((data: CountTag) => {
     return (
@@ -275,98 +264,14 @@ export default function TagList() {
   ];
 
   return (
-    <>
+    <Paper className={classes.main}>
       <Group position="apart">
         <Title order={5} style={{ lineHeight: '36px' }}></Title>
         <TagModal />
       </Group>
       <Divider mt="md" mb="lg" />
-      <Box style={{ position: 'relative' }}>
-        <Table
-          highlightOnHover
-          horizontalSpacing="xl"
-          verticalSpacing="sm"
-          sx={() => {
-            return {
-              'tbody::-webkit-scrollbar': {
-                display: 'none',
-              },
-              tbody: {
-                scrollbarWidth: 'none',
-              },
-            };
-          }}>
-          <thead style={{ display: 'table', width: '100%' }}>
-            <tr>
-              {columns?.map((v) => (
-                <th key={v.name} style={{ width: v.width }}>
-                  {v.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          {data.data.length > 0 && (
-            <tbody
-              style={{
-                width: '100%',
-                height: 'calc(100vh - 292px)',
-                overflow: 'auto',
-                display: 'block',
-              }}>
-              {data.data?.map((tag) => (
-                <tr key={tag.id} style={{ display: 'table', width: '100%' }}>
-                  {columns?.map((v) => (
-                    <td key={v.name} style={{ width: v.width }}>
-                      {v.render ? v.render(tag) : tag[v.name as keyof Tag]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          )}
-        </Table>
-        {data.data.length === 0 && (
-          <Center
-            style={{
-              height: 'calc(100vh - 320px)',
-              flexDirection: 'column',
-            }}>
-            <BoxIcon size={81} strokeWidth={1} color="#eee" />
-            <Text size="md" color="#bbb">
-              暂无数据
-            </Text>
-          </Center>
-        )}
-
-        {!!data.total && (
-          <Box style={{ float: 'right' }}>
-            <Center>
-              <Pagination
-                total={Math.ceil(data.total / data.size)}
-                page={data.page}
-                onChange={(page) => {
-                  nav(`?size=${size}&page=${page}`);
-                }}
-              />
-              <Select
-                mx="md"
-                size="xs"
-                style={{ width: 100 }}
-                data={sizeArr}
-                value={`${size}`}
-                onChange={(v: string) => {
-                  setSize(parseInt(v));
-                  nav(`?size=${v}&page=1`);
-                }}
-                transition="pop-top-left"
-                transitionDuration={80}
-                transitionTimingFunction="ease"
-              />
-            </Center>
-          </Box>
-        )}
-      </Box>
-    </>
+      <Table data={data.data} columns={columns} pagination={data} />
+    </Paper>
   );
 }
 

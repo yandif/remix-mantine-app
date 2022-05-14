@@ -35,7 +35,7 @@ const useStyles = createStyles((theme) => {
 
   return {
     main: {
-      padding: '50px',
+      padding: '30px',
 
       backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
     },
@@ -154,6 +154,7 @@ export default function CreateArticle() {
       );
     }
   };
+
   const handleCreate = async () => {
     const res = form.validate();
     if (!res.hasErrors) {
@@ -170,6 +171,7 @@ export default function CreateArticle() {
       );
     }
   };
+
   return (
     <Grid>
       <Grid.Col xs={8}>

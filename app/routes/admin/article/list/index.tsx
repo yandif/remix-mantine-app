@@ -1,14 +1,9 @@
 import {
-  Box,
   Button,
-  Center,
+  createStyles,
   Divider,
   Group,
-  Pagination,
-  Select,
-  Stack,
-  Table,
-  Text,
+  Paper,
   Title,
   UnstyledButton,
 } from '@mantine/core';
@@ -16,9 +11,9 @@ import type { Article } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
-import { Box as BoxIcon } from 'tabler-icons-react';
 
 import ErrorMessage from '~/components/ErrorMessage';
+import Table from '~/components/Table';
 import { db } from '~/server/database/db.server';
 import {
   commitSession,
@@ -50,23 +45,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const selectOption = {
     where: { author: { id: user.id } },
-    // where: {
-    //   email: { contains: email },
-    //   username: { contains: username },
-    //   mobile: { contains: mobile },
-    //   status,
-    //   platform,
-    // },
-    // select: {
-    //   id: true,
-    //   username: true,
-    //   email: true,
-    //   mobile: true,
-    //   status: true,
-    //   platform: true,
-    //   createdAt: true,
-    //   updatedAt: true,
-    // },
   };
 
   const total = await (await db.article.findMany(selectOption)).length;
@@ -96,7 +74,20 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json(data);
 };
 
+const useStyles = createStyles((theme) => {
+  const isDark = theme.colorScheme === 'dark';
+
+  return {
+    main: {
+      padding: '16px',
+
+      backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
+    },
+  };
+});
+
 export default function ArticleList() {
+  const { classes } = useStyles();
   const { setHeaderTitle } = useAdminStore();
   useEffect(() => {
     setHeaderTitle('文章列表');
@@ -183,7 +174,7 @@ export default function ArticleList() {
   ];
 
   return (
-    <>
+    <Paper className={classes.main}>
       <Group position="apart">
         <Title order={5} style={{ lineHeight: '36px' }}></Title>
 
@@ -192,95 +183,8 @@ export default function ArticleList() {
         </Button>
       </Group>
       <Divider mt="md" mb="lg" />
-      <Box style={{ position: 'relative', minHeight: 500 }}>
-        <Table
-          highlightOnHover
-          horizontalSpacing="xl"
-          verticalSpacing="sm"
-          sx={() => {
-            return {
-              'tbody::-webkit-scrollbar': {
-                display: 'none',
-              },
-              tbody: {
-                scrollbarWidth: 'none',
-              },
-            };
-          }}>
-          <thead style={{ display: 'table', width: '100%' }}>
-            <tr>
-              {columns?.map((v) => (
-                <th key={v.name} style={{ width: v.width }}>
-                  {v.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          {data.data.length > 0 && (
-            <tbody
-              style={{
-                width: '100%',
-                height: 'calc(100vh - 292px)',
-                overflow: 'auto',
-                display: 'block',
-              }}>
-              {data.data?.map((article) => (
-                <tr
-                  key={article.id}
-                  style={{ display: 'table', width: '100%' }}>
-                  {columns?.map((v) => (
-                    <td key={v.name} style={{ width: v.width }}>
-                      {v.render
-                        ? v.render(article)
-                        : article[v.name as keyof Article]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          )}
-        </Table>
-        {data.data.length === 0 && (
-          <Center
-            style={{
-              height: 'calc(100vh - 320px)',
-              flexDirection: 'column',
-            }}>
-            <BoxIcon size={81} strokeWidth={1} color="#eee" />
-            <Text size="md" color="#bbb">
-              暂无数据
-            </Text>
-          </Center>
-        )}
-        <Stack align="flex-end" m="xl">
-          {!!data.total && (
-            <Center>
-              <Pagination
-                total={Math.ceil(data.total / data.size)}
-                page={data.page}
-                onChange={(page) => {
-                  nav(`?size=${size}&page=${page}`);
-                }}
-              />
-              <Select
-                mx="md"
-                size="xs"
-                style={{ width: 100 }}
-                data={sizeArr}
-                value={`${size}`}
-                onChange={(v: string) => {
-                  setSize(parseInt(v));
-                  nav(`?size=${v}&page=1`);
-                }}
-                transition="pop-top-left"
-                transitionDuration={80}
-                transitionTimingFunction="ease"
-              />
-            </Center>
-          )}
-        </Stack>
-      </Box>
-    </>
+      <Table data={data.data} columns={columns} pagination={data} />
+    </Paper>
   );
 }
 
