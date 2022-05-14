@@ -184,113 +184,101 @@ export default function ArticleList() {
 
   return (
     <>
-      <Box
-        sx={(theme) => {
-          const isDark = theme.colorScheme === 'dark';
+      <Group position="apart">
+        <Title order={5} style={{ lineHeight: '36px' }}></Title>
 
-          return {
-            padding: theme.spacing.md,
-            backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
-          };
-        }}>
-        <Group position="apart">
-          <Title order={5} style={{ lineHeight: '36px' }}>
-            文章列表
-          </Title>
-
-          <Button m={0} size="sm" onClick={() => nav('/admin/article/create')}>
-            新建文章
-          </Button>
-        </Group>
-        <Divider mt="md" mb="lg" />
-        <Box style={{ position: 'relative', minHeight: 500 }}>
-          <Table
-            highlightOnHover
-            horizontalSpacing="xl"
-            verticalSpacing="sm"
-            sx={() => {
-              return {
-                'tbody::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                tbody: {
-                  scrollbarWidth: 'none',
-                },
-              };
-            }}>
-            <thead style={{ display: 'table', width: '100%' }}>
-              <tr>
-                {columns?.map((v) => (
-                  <th key={v.name} style={{ width: v.width }}>
-                    {v.header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            {data.data.length > 0 && (
-              <tbody
-                style={{
-                  width: '100%',
-                  height: 'calc(100vh - 320px)',
-                  overflow: 'auto',
-                  display: 'block',
-                }}>
-                {data.data?.map((article) => (
-                  <tr
-                    key={article.id}
-                    style={{ display: 'table', width: '100%' }}>
-                    {columns?.map((v) => (
-                      <td key={v.name} style={{ width: v.width }}>
-                        {v.render
-                          ? v.render(article)
-                          : article[v.name as keyof Article]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            )}
-          </Table>
-          {data.data.length === 0 && (
-            <Center
+        <Button m={0} size="sm" onClick={() => nav('/admin/article/create')}>
+          新建文章
+        </Button>
+      </Group>
+      <Divider mt="md" mb="lg" />
+      <Box style={{ position: 'relative', minHeight: 500 }}>
+        <Table
+          highlightOnHover
+          horizontalSpacing="xl"
+          verticalSpacing="sm"
+          sx={() => {
+            return {
+              'tbody::-webkit-scrollbar': {
+                display: 'none',
+              },
+              tbody: {
+                scrollbarWidth: 'none',
+              },
+            };
+          }}>
+          <thead style={{ display: 'table', width: '100%' }}>
+            <tr>
+              {columns?.map((v) => (
+                <th key={v.name} style={{ width: v.width }}>
+                  {v.header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {data.data.length > 0 && (
+            <tbody
               style={{
-                height: 'calc(100vh - 320px)',
-                flexDirection: 'column',
+                width: '100%',
+                height: 'calc(100vh - 292px)',
+                overflow: 'auto',
+                display: 'block',
               }}>
-              <BoxIcon size={81} strokeWidth={1} color="#eee" />
-              <Text size="md" color="#bbb">
-                暂无数据
-              </Text>
+              {data.data?.map((article) => (
+                <tr
+                  key={article.id}
+                  style={{ display: 'table', width: '100%' }}>
+                  {columns?.map((v) => (
+                    <td key={v.name} style={{ width: v.width }}>
+                      {v.render
+                        ? v.render(article)
+                        : article[v.name as keyof Article]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          )}
+        </Table>
+        {data.data.length === 0 && (
+          <Center
+            style={{
+              height: 'calc(100vh - 320px)',
+              flexDirection: 'column',
+            }}>
+            <BoxIcon size={81} strokeWidth={1} color="#eee" />
+            <Text size="md" color="#bbb">
+              暂无数据
+            </Text>
+          </Center>
+        )}
+        <Stack align="flex-end" m="xl">
+          {!!data.total && (
+            <Center>
+              <Pagination
+                total={Math.ceil(data.total / data.size)}
+                page={data.page}
+                onChange={(page) => {
+                  nav(`?size=${size}&page=${page}`);
+                }}
+              />
+              <Select
+                mx="md"
+                size="xs"
+                style={{ width: 100 }}
+                data={sizeArr}
+                value={`${size}`}
+                onChange={(v: string) => {
+                  setSize(parseInt(v));
+                  nav(`?size=${v}&page=1`);
+                }}
+                transition="pop-top-left"
+                transitionDuration={80}
+                transitionTimingFunction="ease"
+              />
             </Center>
           )}
-          <Stack align="flex-end" m="xl">
-            {!!data.total && (
-              <Center>
-                <Pagination
-                  total={Math.ceil(data.total / data.size)}
-                  page={data.page}
-                  onChange={(page) => {
-                    nav(`?size=${size}&page=${page}`);
-                  }}
-                />
-                <Select
-                  mx="md"
-                  size="xs"
-                  style={{ width: 100 }}
-                  data={sizeArr}
-                  value={`${size}`}
-                  onChange={(v: string) => {
-                    setSize(parseInt(v));
-                    nav(`?size=${v}&page=1`);
-                  }}
-                  transition="pop-top-left"
-                  transitionDuration={80}
-                  transitionTimingFunction="ease"
-                />
-              </Center>
-            )}
-          </Stack>
-        </Box>
+        </Stack>
       </Box>
     </>
   );

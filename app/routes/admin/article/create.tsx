@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  createStyles,
   Divider,
   Grid,
   Group,
@@ -32,7 +33,21 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: stylesHref }];
 };
 
-const CreateArticle: FC = () => {
+const useStyles = createStyles((theme) => {
+  const isDark = theme.colorScheme === 'dark';
+
+  return {
+    main: {
+      boxSizing: 'border-box',
+      minHeight: 'calc(100vh - 60px)',
+      padding: theme.spacing.md,
+      backgroundColor: isDark ? theme.colors.dark[6] : theme.colors.gray[1],
+    },
+  };
+});
+
+export default function CreateArticle() {
+  const { classes } = useStyles();
   const { setHeaderTitle } = useAdminStore();
   useEffect(() => {
     setHeaderTitle('新建文章');
@@ -110,21 +125,7 @@ const CreateArticle: FC = () => {
   /** 选择标签👆 */
 
   return (
-    <Box
-      sx={(theme) => {
-        const isDark = theme.colorScheme === 'dark';
-
-        return {
-          padding: theme.spacing.md,
-          backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
-        };
-      }}>
-      <Group position="apart">
-        <Title order={5} style={{ lineHeight: '36px' }}>
-          新建文章
-        </Title>
-      </Group>
-      <Divider mt="md" mb="lg" />
+    <>
       <Box mx="xl" my="md" style={{ position: 'relative' }}>
         <fetcher.Form>
           <Grid gutter="xl">
@@ -204,11 +205,9 @@ const CreateArticle: FC = () => {
           </Button>
         </fetcher.Form>
       </Box>
-    </Box>
+    </>
   );
-};
-
-export default CreateArticle;
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await checkAuth(request);

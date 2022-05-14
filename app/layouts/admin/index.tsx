@@ -3,6 +3,7 @@ import {
   Box,
   Center,
   createStyles,
+  Divider,
   Group,
   MediaQuery,
   Menu,
@@ -29,7 +30,7 @@ const useStyles = createStyles((theme) => {
 
   return {
     main: {
-      backgroundColor: 'red',
+      backgroundColor,
       color,
       width: '100vw',
       height: '100vh',
@@ -43,12 +44,12 @@ const useStyles = createStyles((theme) => {
       bottom: 0,
     },
 
-    header: {
+    adminNavbar: {
       height: 60,
       padding: theme.spacing.md,
     },
 
-    links: {
+    adminMenus: {
       padding: theme.spacing.xs,
     },
 
@@ -57,6 +58,21 @@ const useStyles = createStyles((theme) => {
       padding: theme.spacing.md,
       backgroundColor,
       color,
+      borderBottom: `1px solid ${
+        isDark ? theme.colors.dark[4] : theme.colors.gray[3]
+      }`,
+    },
+
+    adminMain: {
+      width: '100%',
+      height: 'calc(100vh - 60px)',
+    },
+
+    adminMainBody: {
+      boxSizing: 'border-box',
+      minHeight: 'calc(100vh - 60px)',
+      padding: theme.spacing.md,
+      backgroundColor: isDark ? theme.colors.dark[6] : theme.colors.gray[1],
     },
   };
 });
@@ -76,14 +92,16 @@ function AdminLayout() {
           className={classes.navbar}
           px={0}
           py={0}>
-          <Navbar.Section className={classes.header}>
+          <Navbar.Section className={classes.adminNavbar}>
             <Center>
               <Title order={4}>{sizeName}</Title>
-              <ToggleColorSchemeIcon ml="md" />
             </Center>
           </Navbar.Section>
 
-          <Navbar.Section grow className={classes.links} component={ScrollArea}>
+          <Navbar.Section
+            grow
+            className={classes.adminMenus}
+            component={ScrollArea}>
             {menus.map((item) => (
               <LinksGroup {...item} key={item.label} base="/admin" />
             ))}
@@ -111,6 +129,10 @@ function AdminLayout() {
                   </Group>
                 </UnstyledButton>
               }>
+              <Menu.Label>
+                <ToggleColorSchemeIcon ml="md" />
+              </Menu.Label>
+              <Divider />
               <Menu.Label>设置</Menu.Label>
               <Menu.Item icon={<Settings size={14} />}>个人中心</Menu.Item>
               <Menu.Item
@@ -121,7 +143,11 @@ function AdminLayout() {
               </Menu.Item>
             </Menu>
           </Group>
-          <Outlet />
+          <ScrollArea className={classes.adminMain}>
+            <Box className={classes.adminMainBody}>
+              <Outlet />
+            </Box>
+          </ScrollArea>
         </Box>
       </Box>
     </>

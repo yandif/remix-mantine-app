@@ -135,21 +135,7 @@ export default function EditArticle() {
   /** 选择标签👆 */
 
   return (
-    <Box
-      sx={(theme) => {
-        const isDark = theme.colorScheme === 'dark';
-
-        return {
-          padding: theme.spacing.md,
-          backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
-        };
-      }}>
-      <Group position="apart">
-        <Title order={5} style={{ height: 36, lineHeight: '36px' }}>
-          编辑文章 ({dayjs(article.updatedAt).format('YYYY-MM-DD HH:mm:ss')})
-        </Title>
-      </Group>
-      <Divider mt="md" mb="lg" />
+    <>
       <Box mx="xl" my="md" style={{ position: 'relative', minHeight: 500 }}>
         <fetcher.Form>
           <Grid gutter="xl">
@@ -233,7 +219,7 @@ export default function EditArticle() {
           </Button>
         </fetcher.Form>
       </Box>
-    </Box>
+    </>
   );
 }
 

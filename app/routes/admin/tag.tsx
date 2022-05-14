@@ -278,108 +278,95 @@ export default function TagList() {
 
   return (
     <>
-      <Box
-        sx={(theme) => {
-          const isDark = theme.colorScheme === 'dark';
-
-          return {
-            height: '100vh',
-            backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
-          };
-        }}>
-        <Group m="md" position="apart">
-          <Title order={5} style={{ lineHeight: '36px' }}>
-            标签列表
-          </Title>
-          <TagModal />
-        </Group>
-        <Divider mt="md" mb="lg" />
-        <Box style={{ position: 'relative', height: '100%' }}>
-          <Table
-            highlightOnHover
-            horizontalSpacing="xl"
-            verticalSpacing="sm"
-            sx={() => {
-              return {
-                height: '100%',
-                'tbody::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                thead: { display: 'table', width: '100%' },
-                tbody: {
-                  scrollbarWidth: 'none',
-                  width: '100%',
-                  height: '100%',
-                  overflow: 'auto',
-                  display: 'block',
-                  tr: { display: 'table', width: '100%' },
-                },
-              };
-            }}>
-            <thead>
-              <tr>
-                {columns?.map((v) => (
-                  <th key={v.name} style={{ width: v.width }}>
-                    {v.header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            {data.data.length > 0 && (
-              <tbody>
-                {data.data?.map((tag) => (
-                  <tr key={tag.id}>
-                    {columns?.map((v) => (
-                      <td key={v.name} style={{ width: v.width }}>
-                        {v.render ? v.render(tag) : tag[v.name as keyof Tag]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            )}
-          </Table>
-          {data.data.length === 0 && (
-            <Center
+      <Group position="apart">
+        <Title order={5} style={{ lineHeight: '36px' }}></Title>
+        <TagModal />
+      </Group>
+      <Divider mt="md" mb="lg" />
+      <Box style={{ position: 'relative' }}>
+        <Table
+          highlightOnHover
+          horizontalSpacing="xl"
+          verticalSpacing="sm"
+          sx={() => {
+            return {
+              'tbody::-webkit-scrollbar': {
+                display: 'none',
+              },
+              tbody: {
+                scrollbarWidth: 'none',
+              },
+            };
+          }}>
+          <thead style={{ display: 'table', width: '100%' }}>
+            <tr>
+              {columns?.map((v) => (
+                <th key={v.name} style={{ width: v.width }}>
+                  {v.header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {data.data.length > 0 && (
+            <tbody
               style={{
-                height: 'calc(100vh - 320px)',
-                flexDirection: 'column',
+                width: '100%',
+                height: 'calc(100vh - 292px)',
+                overflow: 'auto',
+                display: 'block',
               }}>
-              <BoxIcon size={81} strokeWidth={1} color="#eee" />
-              <Text size="md" color="#bbb">
-                暂无数据
-              </Text>
-            </Center>
+              {data.data?.map((tag) => (
+                <tr key={tag.id} style={{ display: 'table', width: '100%' }}>
+                  {columns?.map((v) => (
+                    <td key={v.name} style={{ width: v.width }}>
+                      {v.render ? v.render(tag) : tag[v.name as keyof Tag]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
           )}
+        </Table>
+        {data.data.length === 0 && (
+          <Center
+            style={{
+              height: 'calc(100vh - 320px)',
+              flexDirection: 'column',
+            }}>
+            <BoxIcon size={81} strokeWidth={1} color="#eee" />
+            <Text size="md" color="#bbb">
+              暂无数据
+            </Text>
+          </Center>
+        )}
 
-          {!!data.total && (
-            <Box style={{ float: 'right' }}>
-              <Center>
-                <Pagination
-                  total={Math.ceil(data.total / data.size)}
-                  page={data.page}
-                  onChange={(page) => {
-                    nav(`?size=${size}&page=${page}`);
-                  }}
-                />
-                <Select
-                  mx="md"
-                  size="xs"
-                  style={{ width: 100 }}
-                  data={sizeArr}
-                  value={`${size}`}
-                  onChange={(v: string) => {
-                    setSize(parseInt(v));
-                    nav(`?size=${v}&page=1`);
-                  }}
-                  transition="pop-top-left"
-                  transitionDuration={80}
-                  transitionTimingFunction="ease"
-                />
-              </Center>
-            </Box>
-          )}
-        </Box>
+        {!!data.total && (
+          <Box style={{ float: 'right' }}>
+            <Center>
+              <Pagination
+                total={Math.ceil(data.total / data.size)}
+                page={data.page}
+                onChange={(page) => {
+                  nav(`?size=${size}&page=${page}`);
+                }}
+              />
+              <Select
+                mx="md"
+                size="xs"
+                style={{ width: 100 }}
+                data={sizeArr}
+                value={`${size}`}
+                onChange={(v: string) => {
+                  setSize(parseInt(v));
+                  nav(`?size=${v}&page=1`);
+                }}
+                transition="pop-top-left"
+                transitionDuration={80}
+                transitionTimingFunction="ease"
+              />
+            </Center>
+          </Box>
+        )}
       </Box>
     </>
   );

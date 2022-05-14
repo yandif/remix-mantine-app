@@ -1,6 +1,6 @@
 import type { Account } from '@prisma/client';
 import { useEffect } from 'react';
-import type { LoaderFunction } from 'remix';
+import type { LinksFunction, LoaderFunction } from 'remix';
 import { json, useLoaderData } from 'remix';
 import {
   Adjustments,
@@ -16,6 +16,11 @@ import {
 import AdminLayout from '~/layouts/admin';
 import { authenticator } from '~/services/auth/auth.server';
 import useAdminStore from '~/stores/admin';
+import stylesHref from '~/styles/admin.css';
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: stylesHref }];
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request, {
