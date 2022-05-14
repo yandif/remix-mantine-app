@@ -15,8 +15,8 @@ const useStyles = createStyles((theme) => ({
   control: {
     fontWeight: 500,
     display: 'block',
-    width: '100%',
-    padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
+    padding: '6px 12px',
+    margin: '4px',
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     fontSize: theme.fontSizes.sm,
     borderRadius: '6px',
@@ -48,9 +48,9 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 500,
     display: 'block',
     textDecoration: 'none',
-    padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-    paddingLeft: 31,
-    marginLeft: 30,
+    padding: '6px 12px 6px 31px',
+    margin: '0px 4px 8px 30px',
+
     fontSize: theme.fontSizes.sm,
     color:
       theme.colorScheme === 'dark'
@@ -59,7 +59,7 @@ const useStyles = createStyles((theme) => ({
     borderLeft: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
     }`,
-    borderRadius: '6px',
+    borderRadius: '0 6px 6px 0 ',
     '&:hover': {
       backgroundColor:
         theme.colorScheme === 'dark'
@@ -67,17 +67,6 @@ const useStyles = createStyles((theme) => ({
           : theme.colors.gray[0],
       color: theme.colorScheme === 'dark' ? theme.white : theme.black,
     },
-  },
-
-  link1: {
-    fontWeight: 500,
-    display: 'block',
-    textDecoration: 'none',
-    fontSize: theme.fontSizes.sm,
-    color:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[0]
-        : theme.colors.gray[7],
   },
 
   chevron: {
@@ -127,41 +116,49 @@ export function LinksGroup({
 
   const [opened, setOpened] = useState(initiallyOpened || initOpened || false);
   const items = (hasLinks ? links : []).map((_link) => (
-    <Text
+    <UnstyledButton
       component={Link}
       className={wrapperClass(classes.link, _link.link)}
       to={base + _link.link}
       key={_link.label}>
       {_link.label}
-    </Text>
+    </UnstyledButton>
   ));
 
   return (
-    <>
-      <Link className={classes.link1} to={link ? base + link : '#'}>
-        <UnstyledButton
-          onClick={() => setOpened((o) => !o)}
-          className={wrapperClass(classes.control, link)}>
-          <Group position="apart" spacing={0}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Icon size={18} />
-              <Box ml="md">{label}</Box>
-            </Box>
-            {hasLinks && (
-              <ChevronIcon
-                className={classes.chevron}
-                size={14}
-                style={{
-                  transform: opened
-                    ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)`
-                    : 'none',
-                }}
-              />
-            )}
-          </Group>
-        </UnstyledButton>
-      </Link>
-      {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
-    </>
+    <div>
+      <UnstyledButton
+        component={Link}
+        to={link ? base + link : '#'}
+        onClick={() => setOpened((o) => !o)}
+        className={wrapperClass(classes.control, link)}>
+        <Group position="apart" spacing={0}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Icon size={18} />
+            <Box ml="md">{label}</Box>
+          </Box>
+          {hasLinks && (
+            <ChevronIcon
+              className={classes.chevron}
+              size={14}
+              style={{
+                transform: opened
+                  ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)`
+                  : 'none',
+              }}
+            />
+          )}
+        </Group>
+      </UnstyledButton>
+
+      {hasLinks ? (
+        <Collapse
+          in={opened}
+          transitionDuration={200}
+          transitionTimingFunction="linear">
+          {items}
+        </Collapse>
+      ) : null}
+    </div>
   );
 }

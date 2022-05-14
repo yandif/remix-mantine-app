@@ -5,6 +5,7 @@ import {
   Grid,
   InputWrapper,
   MultiSelect,
+  Paper,
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -34,7 +35,8 @@ const useStyles = createStyles((theme) => {
 
   return {
     main: {
-      padding: '50px 200px',
+      padding: '50px 50px',
+      margin: '0 150px',
       backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
     },
   };
@@ -119,7 +121,7 @@ export default function CreateArticle() {
   /** 选择标签👆 */
 
   return (
-    <Box className={classes.main}>
+    <Paper className={classes.main} withBorder>
       <fetcher.Form>
         <Grid gutter="lg">
           <Grid.Col span={6}>
@@ -197,7 +199,7 @@ export default function CreateArticle() {
           提交
         </Button>
       </fetcher.Form>
-    </Box>
+    </Paper>
   );
 }
 

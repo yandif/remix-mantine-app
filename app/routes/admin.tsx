@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-import type { Account } from '@prisma/client';
 import { useEffect } from 'react';
 import type { LinksFunction, LoaderFunction } from 'remix';
 import { json, useLoaderData } from 'remix';
@@ -14,6 +12,7 @@ import {
   Tags,
 } from 'tabler-icons-react';
 
+import MantineProvider from '~/components/MantineProvider';
 import AdminLayout from '~/layouts/admin';
 import { authenticator } from '~/server/auth/auth.server';
 import useAdminStore from '~/stores/admin';
