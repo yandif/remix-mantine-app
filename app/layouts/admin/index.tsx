@@ -1,7 +1,6 @@
 import { Box, createStyles, ScrollArea } from '@mantine/core';
 import { Outlet } from 'remix';
 
-import MantineProvider from '~/components/MantineProvider';
 import useAdminStore from '~/stores/admin';
 
 import Header from './Header';
@@ -36,7 +35,7 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-function AdminLayout() {
+export default function AdminLayout() {
   const { classes } = useStyles();
   const { user } = useAdminStore();
   const navbarWidth = 180;
@@ -57,13 +56,5 @@ function AdminLayout() {
         </>
       )}
     </Box>
-  );
-}
-
-export default function ThemedAdminLayout() {
-  return (
-    <MantineProvider>
-      <AdminLayout />
-    </MantineProvider>
   );
 }

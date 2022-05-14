@@ -1,3 +1,4 @@
+import { MantineProvider } from '@mantine/core';
 import type { Account } from '@prisma/client';
 import { useEffect } from 'react';
 import type { LinksFunction, LoaderFunction } from 'remix';
@@ -26,18 +27,15 @@ export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: '/login',
   });
-  return json(user);
+
+  const site = {
+    title: '管理界面',
+  };
+
+  return json({ user, site });
 };
 
-export const site = {
-  title: '管理界面',
-};
-
-export const user = {
-  name: 'Yandif',
-};
-
-export const mockdata = [
+const mockdata = [
   { label: '看板', icon: Gauge, link: '/dashboard' },
 
   { label: '公告管理', icon: MessageDots, link: '/announcement' },
@@ -58,13 +56,19 @@ export const mockdata = [
 ];
 
 export default function AdminLayoutWrapper() {
-  const user = useLoaderData<Account>();
+  const { user, site } = useLoaderData();
   const { setUser, setSizeName, setMenus, setHeaderTitle } = useAdminStore();
+
   useEffect(() => {
     setUser(user);
-    setSizeName('管理界面');
+    setSizeName(site.title);
     setMenus(mockdata);
     setHeaderTitle('');
   }, []);
-  return <AdminLayout />;
+
+  return (
+    <MantineProvider>
+      <AdminLayout />
+    </MantineProvider>
+  );
 }
