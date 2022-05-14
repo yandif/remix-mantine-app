@@ -2,23 +2,18 @@ import {
   Box,
   Button,
   createStyles,
-  Divider,
   Grid,
-  Group,
   InputWrapper,
   MultiSelect,
   TextInput,
-  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
-import type { FC } from 'react';
 import { forwardRef, useEffect, useState } from 'react';
 import type { ActionFunction, LinksFunction } from 'remix';
 import { json, redirect, useFetcher } from 'remix';
 
 import EngineDemo from '~/components/Editor';
-import { checkAuth } from '~/middleware/index.server';
 import { db } from '~/services/database/db.server';
 import {
   commitSession,
@@ -26,6 +21,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import { checkAuth } from '~/services/middleware/auth.server';
 import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/editor.css';
 

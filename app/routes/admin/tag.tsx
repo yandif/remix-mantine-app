@@ -3,7 +3,6 @@ import {
   Button,
   Center,
   Divider,
-  Grid,
   Group,
   Modal,
   Pagination,
@@ -18,14 +17,12 @@ import {
 import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
 import type { FC } from 'react';
-import { useCallback } from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
 
 import ErrorMessage from '~/components/ErrorMessage';
-import { checkAuth } from '~/middleware/auth.server';
 import { db } from '~/services/database/db.server';
 import {
   commitSession,
@@ -33,6 +30,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import { checkAuth } from '~/services/middleware/auth.server';
 import useAdminStore from '~/stores/admin';
 
 interface CountTag extends Tag {

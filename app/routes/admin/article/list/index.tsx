@@ -19,7 +19,6 @@ import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
 
 import ErrorMessage from '~/components/ErrorMessage';
-import { checkAuth } from '~/middleware/auth.server';
 import { db } from '~/services/database/db.server';
 import {
   commitSession,
@@ -27,6 +26,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/services/message/message.server';
+import { checkAuth } from '~/services/middleware/auth.server';
 import useAdminStore from '~/stores/admin';
 
 type LoaderData = {
