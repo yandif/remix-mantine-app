@@ -142,8 +142,7 @@ export default function Editor(
         }
       }}
       style={{
-        maxHeight: '600px',
-        minHeight: '400px',
+        height: '510px',
         overflow: 'auto',
         cursor: 'text',
         borderColor,

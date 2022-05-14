@@ -1,17 +1,17 @@
 import {
-  Box,
   Button,
+  Container,
   createStyles,
   Grid,
   InputWrapper,
   MultiSelect,
-  Paper,
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
 import { forwardRef, useEffect, useState } from 'react';
 import type { ActionFunction, LinksFunction } from 'remix';
+import { useLoaderData } from 'remix';
 import { json, redirect, useFetcher } from 'remix';
 
 import EngineDemo from '~/components/Editor';
@@ -35,27 +35,40 @@ const useStyles = createStyles((theme) => {
 
   return {
     main: {
-      padding: '50px 50px',
-      margin: '0 150px',
+      padding: '50px',
+
       backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
     },
   };
 });
 
 export default function CreateArticle() {
-  const { classes } = useStyles();
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('新建文章');
-  }, []);
-  const fetcher = useFetcher();
-
-  const form = useForm({
-    initialValues: {
+  const { article } = useLoaderData() || {};
+  const headerTitle = article ? '文章详情' : '新建文章';
+  const initialValues = (() => {
+    if (article) {
+      return {
+        title: article.title,
+        content: article.content,
+        tag: (article as any)?.tag.map((v: Tag) => `${v.id}`),
+      };
+    }
+    return {
       title: '',
       content: '',
       tag: [] as string[],
-    },
+    };
+  })();
+  const { setHeaderTitle } = useAdminStore();
+  useEffect(() => {
+    setHeaderTitle(headerTitle);
+  }, []);
+
+  const { classes } = useStyles();
+
+  const fetcher = useFetcher();
+  const form = useForm({
+    initialValues,
 
     validate: {
       title: (value) => (value?.length === 0 ? '请输入文章标题' : null),
@@ -95,7 +108,7 @@ export default function CreateArticle() {
 
       form.setFieldValue(
         'tag',
-        form.values.tag.map((v) => {
+        form.values.tag.map((v: string) => {
           if (v === name) {
             return `${id}`;
           } else {
@@ -120,11 +133,64 @@ export default function CreateArticle() {
   );
   /** 选择标签👆 */
 
+  const handleEdit = async () => {
+    const res = form.validate();
+    if (
+      form.values.title === article.title &&
+      form.values.content === article.content &&
+      form.values.tag.toString() ===
+        (article as any)?.tag.map((v: Tag) => `${v.id}`).toString()
+    ) {
+      return;
+    }
+
+    if (!res.hasErrors) {
+      const { title, tag, content } = form.values;
+      await fetcher.submit(
+        { id: `${article.id}`, title, content, tag: tag.toString() },
+        {
+          method: 'post',
+        },
+      );
+    }
+  };
+  const handleCreate = async () => {
+    const res = form.validate();
+    if (!res.hasErrors) {
+      const { title, tag, content } = form.values;
+      await fetcher.submit(
+        {
+          title,
+          content,
+          tag: tag.toString(),
+        },
+        {
+          method: 'post',
+        },
+      );
+    }
+  };
   return (
-    <Paper className={classes.main} withBorder>
-      <fetcher.Form>
-        <Grid gutter="lg">
-          <Grid.Col span={6}>
+    <Grid>
+      <Grid.Col xs={8}>
+        <Container className={classes.main}>
+          <fetcher.Form>
+            <InputWrapper
+              pb="md"
+              required
+              label="内容"
+              {...form.getInputProps('content')}>
+              <EngineDemo
+                placeholder="文章内容"
+                {...form.getInputProps('content')}
+              />
+            </InputWrapper>
+          </fetcher.Form>
+        </Container>
+      </Grid.Col>
+      <Grid.Col xs={4}>
+        <Container className={classes.main}>
+          <fetcher.Form>
             <TextInput
               pb="md"
               required
@@ -132,8 +198,6 @@ export default function CreateArticle() {
               placeholder="文章标题"
               {...form.getInputProps('title')}
             />
-          </Grid.Col>
-          <Grid.Col span={6}>
             <MultiSelect
               pb="md"
               label="标签"
@@ -165,41 +229,13 @@ export default function CreateArticle() {
               }}
               {...form.getInputProps('tag')}
             />
-          </Grid.Col>
-        </Grid>
-
-        <InputWrapper
-          pb="md"
-          required
-          label="内容"
-          {...form.getInputProps('content')}>
-          <EngineDemo
-            placeholder="文章内容"
-            {...form.getInputProps('content')}
-          />
-        </InputWrapper>
-
-        <Button
-          onClick={async () => {
-            const res = form.validate();
-            if (!res.hasErrors) {
-              const { title, tag, content } = form.values;
-              await fetcher.submit(
-                {
-                  title,
-                  content,
-                  tag: tag.toString(),
-                },
-                {
-                  method: 'post',
-                },
-              );
-            }
-          }}>
-          提交
-        </Button>
-      </fetcher.Form>
-    </Paper>
+            <Button onClick={article ? handleEdit : handleCreate}>
+              {article ? '保存' : '提交'}
+            </Button>
+          </fetcher.Form>
+        </Container>
+      </Grid.Col>
+    </Grid>
   );
 }
 
