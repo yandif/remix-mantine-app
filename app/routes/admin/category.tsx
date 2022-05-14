@@ -7,12 +7,7 @@ const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
 
   return {
-    main: {
-      boxSizing: 'border-box',
-      minHeight: 'calc(100vh - 60px)',
-      padding: theme.spacing.md,
-      backgroundColor: isDark ? theme.colors.dark[6] : theme.colors.gray[1],
-    },
+    main: {},
   };
 });
 

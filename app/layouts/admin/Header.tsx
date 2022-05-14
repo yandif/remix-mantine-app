@@ -29,6 +29,7 @@ const useStyles = createStyles((theme) => {
       borderBottom: `1px solid ${
         isDark ? theme.colors.dark[4] : theme.colors.gray[3]
       }`,
+      boxShadow: theme.shadows.xs,
     },
   };
 });

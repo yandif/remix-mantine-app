@@ -31,7 +31,7 @@ const useStyles = createStyles((theme) => {
       boxSizing: 'border-box',
       minHeight: 'calc(100vh - 60px)',
       padding: theme.spacing.md,
-      backgroundColor: isDark ? theme.colors.dark[6] : theme.colors.gray[1],
+      backgroundColor: isDark ? theme.colors.dark[9] : theme.colors.gray[0],
     },
   };
 });
@@ -48,7 +48,7 @@ function AdminLayout() {
           <SideBar navbarWidth={navbarWidth} />
           <Box pl={navbarWidth}>
             <Header />
-            <ScrollArea className={classes.main}>
+            <ScrollArea className={classes.mainWrapper}>
               <Box className={classes.main}>
                 <Outlet />
               </Box>

@@ -34,10 +34,8 @@ const useStyles = createStyles((theme) => {
 
   return {
     main: {
-      boxSizing: 'border-box',
-      minHeight: 'calc(100vh - 60px)',
-      padding: theme.spacing.md,
-      backgroundColor: isDark ? theme.colors.dark[6] : theme.colors.gray[1],
+      padding: '50px 200px',
+      backgroundColor: isDark ? theme.colors.dark[7] : theme.white,
     },
   };
 });
@@ -121,87 +119,85 @@ export default function CreateArticle() {
   /** 选择标签👆 */
 
   return (
-    <>
-      <Box mx="xl" my="md" style={{ position: 'relative' }}>
-        <fetcher.Form>
-          <Grid gutter="xl">
-            <Grid.Col span={6}>
-              <TextInput
-                mb="md"
-                required
-                label="标题"
-                placeholder="文章标题"
-                {...form.getInputProps('title')}
-              />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <MultiSelect
-                mb="md"
-                label="标签"
-                data={tags}
-                placeholder="文章标签"
-                searchable
-                creatable
-                maxSelectedValues={4}
-                getCreateLabel={(query) => `+ 新建 ${query}`}
-                onCreate={async (query) => {
-                  await createTagFetcher.submit(
-                    { name: query },
-                    {
-                      action: '/admin/tag',
-                      method: 'post',
-                    },
-                  );
-                }}
-                itemComponent={TagItem}
-                filter={(value, selected, item) => {
-                  if (selected) return false;
-                  const filterName = item?.label
-                    ?.toLowerCase()
-                    ?.includes(value?.toLowerCase()?.trim());
-                  const filterDescription = item?.description
-                    ?.toLowerCase()
-                    ?.includes(value?.toLowerCase()?.trim());
-                  return filterName || filterDescription;
-                }}
-                {...form.getInputProps('tag')}
-              />
-            </Grid.Col>
-          </Grid>
-
-          <InputWrapper
-            mb="md"
-            required
-            label="内容"
-            {...form.getInputProps('content')}>
-            <EngineDemo
-              placeholder="文章内容"
-              {...form.getInputProps('content')}
+    <Box className={classes.main}>
+      <fetcher.Form>
+        <Grid gutter="lg">
+          <Grid.Col span={6}>
+            <TextInput
+              pb="md"
+              required
+              label="标题"
+              placeholder="文章标题"
+              {...form.getInputProps('title')}
             />
-          </InputWrapper>
-
-          <Button
-            onClick={async () => {
-              const res = form.validate();
-              if (!res.hasErrors) {
-                const { title, tag, content } = form.values;
-                await fetcher.submit(
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <MultiSelect
+              pb="md"
+              label="标签"
+              data={tags}
+              placeholder="文章标签"
+              searchable
+              creatable
+              maxSelectedValues={4}
+              getCreateLabel={(query) => `+ 新建 ${query}`}
+              onCreate={async (query) => {
+                await createTagFetcher.submit(
+                  { name: query },
                   {
-                    title,
-                    content,
-                    tag: tag.toString(),
-                  },
-                  {
+                    action: '/admin/tag',
                     method: 'post',
                   },
                 );
-              }
-            }}>
-            提交
-          </Button>
-        </fetcher.Form>
-      </Box>
-    </>
+              }}
+              itemComponent={TagItem}
+              filter={(value, selected, item) => {
+                if (selected) return false;
+                const filterName = item?.label
+                  ?.toLowerCase()
+                  ?.includes(value?.toLowerCase()?.trim());
+                const filterDescription = item?.description
+                  ?.toLowerCase()
+                  ?.includes(value?.toLowerCase()?.trim());
+                return filterName || filterDescription;
+              }}
+              {...form.getInputProps('tag')}
+            />
+          </Grid.Col>
+        </Grid>
+
+        <InputWrapper
+          pb="md"
+          required
+          label="内容"
+          {...form.getInputProps('content')}>
+          <EngineDemo
+            placeholder="文章内容"
+            {...form.getInputProps('content')}
+          />
+        </InputWrapper>
+
+        <Button
+          onClick={async () => {
+            const res = form.validate();
+            if (!res.hasErrors) {
+              const { title, tag, content } = form.values;
+              await fetcher.submit(
+                {
+                  title,
+                  content,
+                  tag: tag.toString(),
+                },
+                {
+                  method: 'post',
+                },
+              );
+            }
+          }}>
+          提交
+        </Button>
+      </fetcher.Form>
+    </Box>
   );
 }
 
