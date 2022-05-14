@@ -11,10 +11,10 @@ import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
 import { forwardRef, useEffect, useState } from 'react';
 import type { ActionFunction, LinksFunction } from 'remix';
-import { useLoaderData } from 'remix';
-import { json, redirect, useFetcher } from 'remix';
+import { json, redirect, useFetcher, useLoaderData } from 'remix';
 
 import EngineDemo from '~/components/Editor';
+import { useTitle } from '~/hooks/useTitle';
 import { db } from '~/server/database/db.server';
 import {
   commitSession,
@@ -23,7 +23,6 @@ import {
   setSuccessMessage,
 } from '~/server/message/message.server';
 import { checkAuth } from '~/server/middleware/auth.server';
-import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/editor.css';
 
 export const links: LinksFunction = () => {
@@ -44,7 +43,8 @@ const useStyles = createStyles((theme) => {
 
 export default function CreateArticle() {
   const { article } = useLoaderData() || {};
-  const headerTitle = article ? '文章详情' : '新建文章';
+  useTitle(article ? '文章详情' : '新建文章');
+
   const initialValues = (() => {
     if (article) {
       return {
@@ -59,10 +59,6 @@ export default function CreateArticle() {
       tag: [] as string[],
     };
   })();
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle(headerTitle);
-  }, []);
 
   const { classes } = useStyles();
 

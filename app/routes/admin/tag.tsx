@@ -19,6 +19,7 @@ import { json, useFetcher, useLoaderData } from 'remix';
 
 import ErrorMessage from '~/components/ErrorMessage';
 import Table from '~/components/Table';
+import { useTitle } from '~/hooks/useTitle';
 import { db } from '~/server/database/db.server';
 import {
   commitSession,
@@ -201,12 +202,10 @@ const useStyles = createStyles((theme) => {
 });
 
 export default function TagList() {
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('标签列表');
-  }, []);
-  const { classes } = useStyles();
+  useTitle('标签列表');
+
   const fetcher = useFetcher();
+  const { classes } = useStyles();
   const data = useLoaderData<LoaderData>();
 
   const renderAction = useCallback((data: CountTag) => {
@@ -265,10 +264,9 @@ export default function TagList() {
 
   return (
     <Paper className={classes.main}>
-      <Group position="apart">
-        <Title order={5} style={{ lineHeight: '36px' }}></Title>
+      <Stack align="flex-end">
         <TagModal />
-      </Group>
+      </Stack>
       <Divider mt="md" mb="lg" />
       <Table data={data.data} columns={columns} pagination={data} />
     </Paper>

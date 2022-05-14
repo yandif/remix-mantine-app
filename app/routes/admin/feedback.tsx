@@ -1,11 +1,7 @@
-import { useEffect } from 'react';
-
-import useAdminStore from '~/stores/admin';
+import { useTitle } from '~/hooks/useTitle';
 
 export default function Feedback() {
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('反馈设置');
-  }, []);
+  useTitle('公告管理');
+
   return <div>反馈设置</div>;
 }

@@ -1,7 +1,6 @@
 import { Box, createStyles } from '@mantine/core';
-import { useEffect } from 'react';
 
-import useAdminStore from '~/stores/admin';
+import { useTitle } from '~/hooks/useTitle';
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';
@@ -13,9 +12,7 @@ const useStyles = createStyles((theme) => {
 
 export default function Catrgory() {
   const { classes } = useStyles();
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('分类管理');
-  }, []);
+  useTitle('公告管理');
+
   return <Box className={classes.main}>分类管理</Box>;
 }

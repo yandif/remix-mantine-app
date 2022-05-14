@@ -1,7 +1,6 @@
-import { Container, Grid, Skeleton } from '@mantine/core';
-import { useEffect } from 'react';
+import { Grid, Skeleton } from '@mantine/core';
 
-import useAdminStore from '~/stores/admin';
+import { useTitle } from '~/hooks/useTitle';
 
 const child = <Skeleton height={140} radius="md" animate={false} />;
 
@@ -15,9 +14,7 @@ export function GridAsymmetrical() {
 }
 
 export default function Comment() {
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('评论管理');
-  }, []);
+  useTitle('公告管理');
+
   return <GridAsymmetrical />;
 }

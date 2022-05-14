@@ -2,18 +2,18 @@ import {
   Button,
   createStyles,
   Divider,
-  Group,
   Paper,
-  Title,
+  Stack,
   UnstyledButton,
 } from '@mantine/core';
 import type { Article } from '@prisma/client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 
 import ErrorMessage from '~/components/ErrorMessage';
 import Table from '~/components/Table';
+import { useTitle } from '~/hooks/useTitle';
 import { db } from '~/server/database/db.server';
 import {
   commitSession,
@@ -22,7 +22,6 @@ import {
   setSuccessMessage,
 } from '~/server/message/message.server';
 import { checkAuth } from '~/server/middleware/auth.server';
-import useAdminStore from '~/stores/admin';
 
 type LoaderData = {
   ok: boolean;
@@ -87,29 +86,12 @@ const useStyles = createStyles((theme) => {
 });
 
 export default function ArticleList() {
+  useTitle('文章列表');
+  const nav = useNavigate();
+  const fetcher = useFetcher();
   const { classes } = useStyles();
-  const { setHeaderTitle } = useAdminStore();
-  useEffect(() => {
-    setHeaderTitle('文章列表');
-  }, []);
   const data = useLoaderData<LoaderData>();
 
-  const nav = useNavigate();
-
-  const [size, setSize] = useState(data.size);
-
-  const sizeArr = [
-    { value: '5', label: '5条/页' },
-    { value: '10', label: '10条/页' },
-    { value: '15', label: '15条/页' },
-    { value: '20', label: '20条/页' },
-  ];
-
-  if (![5, 10, 15, 20].includes(size)) {
-    sizeArr.unshift({ value: `${size}`, label: `${size}条/页` });
-  }
-
-  const fetcher = useFetcher();
   const handleDelete = async (id: string) => {
     await fetcher.submit(
       { id },
@@ -175,13 +157,11 @@ export default function ArticleList() {
 
   return (
     <Paper className={classes.main}>
-      <Group position="apart">
-        <Title order={5} style={{ lineHeight: '36px' }}></Title>
-
+      <Stack align="flex-end">
         <Button m={0} size="sm" onClick={() => nav('/admin/article/create')}>
           新建文章
         </Button>
-      </Group>
+      </Stack>
       <Divider mt="md" mb="lg" />
       <Table data={data.data} columns={columns} pagination={data} />
     </Paper>
