@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { LoaderFunction } from 'remix';
 
-import { authenticator } from '~/services/auth/auth.server';
+import { authenticator } from '~/server/auth/auth.server';
 
 const Logout: FC = () => {
   return <h1>Logout</h1>;

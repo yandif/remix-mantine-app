@@ -12,7 +12,7 @@ import { useEffect, useRef } from 'react';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { Form, json, Link, useActionData } from 'remix';
 
-import { authenticator } from '~/services/auth/auth.server';
+import { authenticator } from '~/server/auth/auth.server';
 import useThemeStore from '~/stores/theme';
 
 export default function Login() {

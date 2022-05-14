@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { Authenticator } from 'remix-auth';
 
-import { sessionStorage } from '~/services/auth/session.server';
-import { FormStrategy } from '~/services/auth/strategy.server';
-import { db } from '~/services/database/db.server';
+import { sessionStorage } from '~/server/auth/session.server';
+import { FormStrategy } from '~/server/auth/strategy.server';
+import { db } from '~/server/database/db.server';
 import { auth } from '~/utils';
 export const authenticator = new Authenticator<any>(sessionStorage);
 

@@ -23,14 +23,14 @@ import { json, useFetcher, useLoaderData, useNavigate } from 'remix';
 import { Box as BoxIcon } from 'tabler-icons-react';
 
 import ErrorMessage from '~/components/ErrorMessage';
-import { db } from '~/services/database/db.server';
+import { db } from '~/server/database/db.server';
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/services/message/message.server';
-import { checkAuth } from '~/services/middleware/auth.server';
+} from '~/server/message/message.server';
+import { checkAuth } from '~/server/middleware/auth.server';
 import useAdminStore from '~/stores/admin';
 
 interface CountTag extends Tag {

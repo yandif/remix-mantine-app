@@ -13,8 +13,8 @@ import { toast } from 'react-hot-toast';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { Form, json, Link, useActionData, useNavigate } from 'remix';
 
-import { authenticator } from '~/services/auth/auth.server';
-import { db } from '~/services/database/db.server';
+import { authenticator } from '~/server/auth/auth.server';
+import { db } from '~/server/database/db.server';
 import useThemeStore from '~/stores/theme';
 import { auth } from '~/utils';
 

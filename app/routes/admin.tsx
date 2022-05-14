@@ -14,7 +14,7 @@ import {
 } from 'tabler-icons-react';
 
 import AdminLayout from '~/layouts/admin';
-import { authenticator } from '~/services/auth/auth.server';
+import { authenticator } from '~/server/auth/auth.server';
 import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/admin.css';
 

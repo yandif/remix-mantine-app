@@ -1,11 +1,11 @@
 import { redirect } from 'remix';
 
-import { authenticator } from '~/services/auth/auth.server';
+import { authenticator } from '~/server/auth/auth.server';
 import {
   commitSession,
   getSession,
   setErrorMessage,
-} from '~/services/message/message.server';
+} from '~/server/message/message.server';
 
 export const checkAuth = async (request: Request) => {
   const session = await getSession(request.headers.get('cookie'));

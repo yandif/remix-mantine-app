@@ -12,8 +12,8 @@ import {
   useLoaderData,
 } from 'remix';
 
-import type { ToastMessage } from '~/services/message/message.server';
-import { commitSession, getSession } from '~/services/message/message.server';
+import type { ToastMessage } from '~/server/message/message.server';
+import { commitSession, getSession } from '~/server/message/message.server';
 import stylesHref from '~/styles/index.css';
 
 type LoaderData = {

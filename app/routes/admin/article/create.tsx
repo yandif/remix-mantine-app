@@ -14,14 +14,14 @@ import type { ActionFunction, LinksFunction } from 'remix';
 import { json, redirect, useFetcher } from 'remix';
 
 import EngineDemo from '~/components/Editor';
-import { db } from '~/services/database/db.server';
+import { db } from '~/server/database/db.server';
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/services/message/message.server';
-import { checkAuth } from '~/services/middleware/auth.server';
+} from '~/server/message/message.server';
+import { checkAuth } from '~/server/middleware/auth.server';
 import useAdminStore from '~/stores/admin';
 import stylesHref from '~/styles/editor.css';
 
