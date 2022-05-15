@@ -31,6 +31,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     where: { id },
     include: {
       tag: true,
+      cover: true,
     },
   });
 
@@ -51,6 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
   const tag = (formData.get('tag') as string)?.split(',')?.filter((v) => !!v);
+  const cover = Number(formData.get('cover') as string);
 
   const e = async (message: string) => {
     setErrorMessage(session, message);
@@ -68,14 +70,18 @@ export const action: ActionFunction = async ({ request }) => {
     if (!findArticle || findArticle.accountId !== user.id) {
       return await e('文章不存在');
     }
-
+    if (!cover || !title || !content) {
+      return await e('请确保文章有标题，内容，封面有值!');
+    }
     if (title && content) {
-      console.log(tag);
       const article = await db.article.update({
         where: { id },
         data: {
           title,
           content,
+          cover: {
+            connect: { id: cover },
+          },
           tag: {
             disconnect: findArticle.tag.map((v) => ({ id: v.id })),
             connect: tag.map((v) => ({ id: Number(v) })),

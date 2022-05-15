@@ -82,6 +82,6 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Remix 应用',
+  // title: 'Remix 应用',
   viewport: 'width=device-width,initial-scale=1',
 });

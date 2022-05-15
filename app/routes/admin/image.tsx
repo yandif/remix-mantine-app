@@ -2,23 +2,24 @@ import {
   Button,
   createStyles,
   Divider,
-  Group,
+  Image,
   Modal,
   Paper,
   Stack,
-  TextInput,
-  Title,
   UnstyledButton,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import type { Tag } from '@prisma/client';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { useClipboard } from '@mantine/hooks';
+import type { Image as ImageType } from '@prisma/client';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import type { ActionFunction, LoaderFunction } from 'remix';
 import { json, useFetcher, useLoaderData } from 'remix';
 
 import ErrorMessage from '~/components/ErrorMessage';
 import Table from '~/components/Table';
+import { dropzoneChildren } from '~/components/Upload/ImgUpload';
 import { useTitle } from '~/hooks/useTitle';
 import { db } from '~/server/database/db.server';
 import {
@@ -28,9 +29,8 @@ import {
   setSuccessMessage,
 } from '~/server/message/message.server';
 import { checkAuth } from '~/server/middleware/auth.server';
-import useAdminStore from '~/stores/admin';
 
-interface CountTag extends Tag {
+interface CountImage extends ImageType {
   _count: {
     article: number;
   };
@@ -38,7 +38,7 @@ interface CountTag extends Tag {
 
 type LoaderData = {
   ok: boolean;
-  data: CountTag[];
+  data: CountImage[];
   page: number;
   size: number;
   total: number;
@@ -62,17 +62,16 @@ export const loader: LoaderFunction = async ({ request }) => {
     },
   };
 
-  const total = await await db.tag.count(whereOption);
+  const total = await await db.image.count(whereOption);
 
   if (page > Math.ceil(total / size) && total !== 0)
     throw new Error('page 太大了！');
 
-  const findTag = await db.tag.findMany({
+  const findImage = await db.image.findMany({
     ...whereOption,
     select: {
       id: true,
       name: true,
-      description: true,
       createdAt: true,
       updatedAt: true,
       accountId: true,
@@ -91,7 +90,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const data: LoaderData = {
     ok: true,
-    data: findTag,
+    data: findImage,
     page: page,
     size: size,
     total,
@@ -100,42 +99,37 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json(data);
 };
 
-const TagModal: FC<{ data?: any }> = ({ data }) => {
+const ImageModal: FC<{ data?: any }> = ({ data }) => {
+  const { theme } = useStyles();
   const [opened, setOpened] = useState(false);
-  const initialValues = { name: '', description: '' };
-  const form = useForm({
-    initialValues,
-
-    validate: {
-      name: (value) => (value?.length === 0 ? '请输入名称' : null),
-    },
-  });
-
-  useEffect(() => {
-    if (data) {
-      form.setValues(data);
-    }
-  }, [data]);
+  const [cover, setCover] = useState<any>(data);
 
   const handleOpen = () => {
+    setCover(data);
     setOpened(true);
   };
 
   const handleClose = () => {
-    form.setValues(data || initialValues);
     setOpened(false);
   };
 
-  const fetcher = useFetcher();
-  const handleSave = async () => {
-    const res = form.validate();
-    if (!res.hasErrors) {
-      await fetcher.submit(form.values, {
+  const imgFetcher = useFetcher();
+  const handleUpload = (file: any) => {
+    imgFetcher.submit(
+      { img: file },
+      {
+        encType: 'multipart/form-data',
+        action: '/api/upload',
         method: 'post',
-      });
-      handleClose();
-    }
+      },
+    );
   };
+  useEffect(() => {
+    if (imgFetcher.data?.data) {
+      setCover(imgFetcher.data.data);
+    }
+  }, [imgFetcher.data]);
+  const coverSrc = cover?.name ? `/img/${cover?.name}` : undefined;
 
   return (
     <>
@@ -156,34 +150,25 @@ const TagModal: FC<{ data?: any }> = ({ data }) => {
         </UnstyledButton>
       ) : (
         <Button m={0} size="sm" onClick={() => setOpened(true)}>
-          新建标签
+          新建图片
         </Button>
       )}
       <Modal
         opened={opened}
         onClose={handleClose}
-        title={data ? '编辑标签' : '新建标签'}>
-        <fetcher.Form>
-          <TextInput
-            mb="md"
-            required
-            label="名称"
-            placeholder="标签名称"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('name')}
-          />
-          <TextInput
-            mb="md"
-            label="描述"
-            placeholder="标签描述"
-            style={{ maxWidth: 400 }}
-            {...form.getInputProps('description')}
-          />
-
-          <Stack align="flex-end">
-            <Button onClick={handleSave}>{data ? '保存' : '提交'}</Button>
-          </Stack>
-        </fetcher.Form>
+        title={data ? '编辑图片' : '新建图片'}>
+        <Dropzone
+          p={2}
+          loading={imgFetcher.state === 'loading'}
+          multiple={false}
+          onDrop={(files) => handleUpload(files[0])}
+          maxSize={3 * 1024 ** 2}
+          accept={IMAGE_MIME_TYPE}
+          onReject={() => {
+            toast.error('图片不能大于5M');
+          }}>
+          {(status) => dropzoneChildren(status, theme, coverSrc)}
+        </Dropzone>
       </Modal>
     </>
   );
@@ -201,17 +186,35 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export default function TagList() {
-  useTitle('标签列表');
+export default function ImageList() {
+  useTitle('图片列表');
 
   const fetcher = useFetcher();
   const { classes } = useStyles();
   const data = useLoaderData<LoaderData>();
+  const clipboard = useClipboard({ timeout: 500 });
 
-  const renderAction = useCallback((data: CountTag) => {
+  const renderAction = useCallback((data: CountImage) => {
     return (
       <>
-        <TagModal data={data} />
+        {/* <ImageModal data={data} /> */}
+        <UnstyledButton
+          onClick={() => {
+            clipboard.copy(`${window.location.origin}/img/${data.name}`);
+            toast.success('复制成功');
+          }}
+          sx={(theme) => {
+            return {
+              whiteSpace: 'nowrap',
+              fontSize: 14,
+              padding: 4,
+              margin: 4,
+              display: 'block',
+              color: theme.colors.blue[6],
+            };
+          }}>
+          复制链接
+        </UnstyledButton>
         <UnstyledButton
           onClick={async () => {
             await fetcher.submit({ id: `${data.id}` }, { method: 'delete' });
@@ -240,19 +243,25 @@ export default function TagList() {
     },
     {
       name: 'name',
-      header: '名称',
+      header: '图片',
       width: 200,
-    },
-    {
-      name: 'description',
-      header: '描述',
-      width: 200,
+      render: (data: CountImage) => (
+        <Image
+          height={100}
+          width="auto"
+          radius="sm"
+          src={`/img/${data.name}`}
+          withPlaceholder
+          placeholder={'图片不存在'}
+          alt="背景图片"
+        />
+      ),
     },
     {
       name: 'article',
       header: '文章',
       width: 120,
-      render: (data: CountTag) => data._count.article,
+      render: (data: CountImage) => data._count.article,
     },
     {
       name: 'action',
@@ -265,7 +274,7 @@ export default function TagList() {
   return (
     <Paper className={classes.main}>
       <Stack align="flex-end">
-        <TagModal />
+        <ImageModal />
       </Stack>
       <Divider mt="md" mb="lg" />
       <Table data={data.data} columns={columns} pagination={data} />
@@ -281,7 +290,6 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const id = Number(formData.get('id'));
   const name = formData.get('name') as string;
-  const description = (formData.get('description') as string) || '';
 
   const message = {
     error: async (message: string) => {
@@ -304,58 +312,42 @@ export const action: ActionFunction = async ({ request }) => {
     },
   };
 
-  const createTag = async () => {
+  const createImage = async () => {
     if (name) {
-      const tag = await db.tag.create({
+      const image = await db.image.create({
         data: {
           name,
-          description,
           author: { connect: { id: user.id } },
         },
       });
-      return await message.success('新建成功!', tag);
+      return await message.success('新建成功!', image);
     } else {
-      return await message.error('请确保标签的名称有值!');
+      return await message.error('请确保图片的名称有值!');
     }
   };
 
-  const updateTag = async () => {
-    const tag = await db.tag.findUnique({ where: { id: id } });
-    if (!tag || tag.accountId !== user.id) {
-      return await message.error('保存失败，标签不存在!');
-    } else {
-      await db.tag.update({
-        where: { id: id },
-        data: {
-          name,
-          description,
-        },
-      });
-      return await message.success('保存成功');
-    }
-  };
+  const deleteImage = async () => {
+    const image = await db.image.findUnique({
+      where: { id: id },
+      include: { article: true },
+    });
 
-  const deleteTag = async () => {
-    const tag = await db.tag.findUnique({ where: { id: id } });
-
-    if (!tag || tag.accountId !== user.id) {
-      return await message.error('删除失败，标签不存在!');
-    } else {
-      await db.tag.delete({ where: { id: id } });
-      return await message.success('删除成功');
+    if (!image || image.accountId !== user.id) {
+      return await message.error('删除失败，图片不存在!');
     }
+    if (image.article?.length > 0) {
+      return await message.error('删除失败，图片有文章使用!');
+    }
+    await db.image.delete({ where: { id: id } });
+    return await message.success('删除成功');
   };
 
   if (method === 'DELETE') {
-    return await deleteTag();
+    return await deleteImage();
   }
 
   if (method === 'POST' && !id) {
-    return await createTag();
-  }
-
-  if (method === 'POST' && id) {
-    return await updateTag();
+    return await createImage();
   }
 };
 

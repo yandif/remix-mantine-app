@@ -9,6 +9,7 @@ import {
   Message2,
   MessageDots,
   Notes,
+  Photo,
   Tags,
 } from 'tabler-icons-react';
 
@@ -40,6 +41,7 @@ const mockdata = [
   { label: '公告管理', icon: MessageDots, link: '/announcement' },
   { label: '分类管理', icon: Folders, link: '/category' },
   { label: '标签管理', icon: Tags, link: '/tag' },
+  { label: '图片管理', icon: Photo, link: '/image' },
   {
     label: '文章管理',
     icon: Notes,

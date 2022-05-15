@@ -7,13 +7,16 @@ import {
   MultiSelect,
   TextInput,
 } from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
 import { forwardRef, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import type { ActionFunction, LinksFunction } from 'remix';
 import { json, redirect, useFetcher, useLoaderData } from 'remix';
 
 import EngineDemo from '~/components/Editor';
+import { dropzoneChildren } from '~/components/Upload/ImgUpload';
 import { useTitle } from '~/hooks/useTitle';
 import { db } from '~/server/database/db.server';
 import {
@@ -51,16 +54,18 @@ export default function CreateArticle() {
         title: article.title,
         content: article.content,
         tag: (article as any)?.tag.map((v: Tag) => `${v.id}`),
+        cover: article.cover,
       };
     }
     return {
       title: '',
       content: '',
       tag: [] as string[],
+      cover: '',
     };
   })();
 
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   const fetcher = useFetcher();
   const form = useForm({
@@ -70,6 +75,9 @@ export default function CreateArticle() {
       title: (value) => (value?.length === 0 ? '请输入文章标题' : null),
       content: (value) =>
         value?.length === 0 || value === '<p></p>' ? '请输入文章内容' : null,
+      cover: (value) => {
+        return !value?.id ? '请上传封面' : null;
+      },
     },
   });
 
@@ -135,15 +143,22 @@ export default function CreateArticle() {
       form.values.title === article.title &&
       form.values.content === article.content &&
       form.values.tag.toString() ===
-        (article as any)?.tag.map((v: Tag) => `${v.id}`).toString()
+        (article as any)?.tag.map((v: Tag) => `${v.id}`).toString() &&
+      form.values.cover?.id === article.cover?.id
     ) {
       return;
     }
 
     if (!res.hasErrors) {
-      const { title, tag, content } = form.values;
+      const { title, tag, content, cover } = form.values;
       await fetcher.submit(
-        { id: `${article.id}`, title, content, tag: tag.toString() },
+        {
+          id: `${article.id}`,
+          title,
+          content,
+          cover: cover?.id,
+          tag: tag.toString(),
+        },
         {
           method: 'post',
         },
@@ -154,11 +169,12 @@ export default function CreateArticle() {
   const handleCreate = async () => {
     const res = form.validate();
     if (!res.hasErrors) {
-      const { title, tag, content } = form.values;
+      const { title, tag, content, cover } = form.values;
       await fetcher.submit(
         {
           title,
           content,
+          cover: cover?.id,
           tag: tag.toString(),
         },
         {
@@ -167,6 +183,27 @@ export default function CreateArticle() {
       );
     }
   };
+
+  // 上传图片
+  const imgFetcher = useFetcher();
+  const handleUploa = (file: any) => {
+    imgFetcher.submit(
+      { img: file },
+      {
+        encType: 'multipart/form-data',
+        action: '/api/upload',
+        method: 'post',
+      },
+    );
+  };
+  useEffect(() => {
+    if (imgFetcher.data?.data) {
+      form.setFieldValue('cover', imgFetcher.data.data);
+    }
+  }, [imgFetcher.data]);
+  const coverSrc = form.values.cover?.name
+    ? `/img/${form.values.cover?.name}`
+    : undefined;
 
   return (
     <Grid>
@@ -227,10 +264,42 @@ export default function CreateArticle() {
               }}
               {...form.getInputProps('tag')}
             />
-            <Button onClick={article ? handleEdit : handleCreate}>
-              {article ? '保存' : '提交'}
-            </Button>
           </fetcher.Form>
+        </Container>
+        <Container mt={16} className={classes.main}>
+          <InputWrapper
+            pb="md"
+            required
+            label="封面"
+            {...form.getInputProps('cover')}>
+            <Dropzone
+              sx={(theme) => {
+                const error = form.getInputProps('cover').error;
+                const isDark = theme.colorScheme === 'dark';
+                if (error) {
+                  return {
+                    borderColor: theme.colors.red[isDark ? 4 : 6],
+                  };
+                }
+                return {};
+              }}
+              p={2}
+              loading={imgFetcher.state === 'loading'}
+              multiple={false}
+              onDrop={(files) => handleUploa(files[0])}
+              maxSize={5_000_000}
+              accept={IMAGE_MIME_TYPE}
+              onReject={() => {
+                toast.error('图片不能大于5M');
+              }}>
+              {(status) => dropzoneChildren(status, theme, coverSrc)}
+            </Dropzone>
+          </InputWrapper>
+        </Container>
+        <Container mt={16} className={classes.main}>
+          <Button onClick={article ? handleEdit : handleCreate}>
+            {article ? '保存' : '提交'}
+          </Button>
         </Container>
       </Grid.Col>
     </Grid>
@@ -244,12 +313,14 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get('title') as string;
   const tag = (formData.get('tag') as string)?.split(',')?.filter((v) => !!v);
   const content = formData.get('content') as string;
+  const cover = Number(formData.get('cover') as string);
 
-  if (title && content) {
+  if (title && content && cover) {
     const article = await db.article.create({
       data: {
         title,
         content,
+        cover: { connect: { id: cover } },
         tag: { connect: tag.map((v) => ({ id: Number(v) })) },
         author: { connect: { id: user.id } },
       },
@@ -260,7 +331,7 @@ export const action: ActionFunction = async ({ request }) => {
       headers: { 'Set-Cookie': await commitSession(session) },
     });
   } else {
-    setErrorMessage(session, '请确保文章有标题和内容有值!');
+    setErrorMessage(session, '请确保文章有标题，内容，封面有值!');
     return json(
       { ok: false },
       {

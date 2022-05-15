@@ -17,18 +17,22 @@ model Account {
 
   articles Article[]
   tags     Tag[]
+  images   Image[]
 }
 
 model Article {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
   title     String
-  content   String   @db.Text
+  content   String       @db.Text
+  state     ArticleState @default(DRAFT)
 
   tag       Tag[]
   author    Account @relation(fields: [accountId], references: [id])
   accountId Int
+  cover     Image   @relation(fields: [imageId], references: [id])
+  imageId   Int
 }
 
 model Tag {
@@ -41,4 +45,21 @@ model Tag {
   article   Article[]
   author    Account   @relation(fields: [accountId], references: [id])
   accountId Int
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  name      String
+
+  article   Article[]
+  author    Account   @relation(fields: [accountId], references: [id])
+  accountId Int
+}
+
+enum ArticleState {
+  PUBLISHED //已发布
+  DRAFT //草稿
+  DELETED //删除
 }

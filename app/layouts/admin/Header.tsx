@@ -8,6 +8,7 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
+import { useDocumentTitle } from '@mantine/hooks';
 import { Link } from 'remix';
 import { ChevronDown, Logout, Settings } from 'tabler-icons-react';
 
@@ -37,7 +38,7 @@ const useStyles = createStyles((theme) => {
 export default function Header() {
   const { classes } = useStyles();
   const { headerTitle, user } = useAdminStore();
-
+  useDocumentTitle(headerTitle);
   return (
     <Group position="apart" className={classes.header}>
       <Title order={5}>{headerTitle}</Title>
