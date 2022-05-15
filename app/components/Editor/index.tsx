@@ -1,4 +1,4 @@
-import type { MantineTheme, PaperProps, Sx } from '@mantine/core';
+import type { CSSObject, MantineTheme, PaperProps, Sx } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
@@ -17,46 +17,145 @@ import StarterKit from '@tiptap/starter-kit';
 import _ from 'lodash';
 import type { ReactNode } from 'react';
 
-const mainSx = (theme: MantineTheme) => {
-  const isDark = theme.colorScheme === 'dark';
+import { CodeBlockRefractor } from './Plugin/CodeBlockRefractor';
+import { darkTheme, lightTheme } from './theme';
 
-  return {
-    background: isDark ? theme.colors.dark[5] : theme.white,
-    '.ProseMirror': {
-      padding: '0 16px',
-      background: isDark ? theme.colors.dark[5] : theme.white,
-      '& *': {
-        wordBreak: 'break-all',
-        '&::selection': {
-          background: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)',
+const editorStyle: Sx = (theme: MantineTheme) => {
+  const isDark = theme.colorScheme === 'dark';
+  const mainColor = theme.colors.blue[6];
+
+  const renderHeader = (level: number): CSSObject => {
+    const topArr = [15, 11, 5, 3, 2, 0];
+    return {
+      position: 'relative',
+      color: mainColor,
+      '&:before': {
+        content: `"H${level}"`,
+        position: 'absolute',
+        color: '#c6c9ce',
+        left: -22,
+        fontSize: 12,
+        top: topArr[level - 1],
+        transform: 'scale(1)',
+      },
+    };
+  };
+
+  const renderQuote = (): CSSObject => {
+    return {
+      borderLeft: `3px solid ${mainColor}`,
+      marginInline: 0,
+      paddingLeft: 8,
+      color: '#8c8c8c',
+      p: {
+        marginBlock: 8,
+      },
+    };
+  };
+
+  const renderList = (): CSSObject => {
+    return {
+      paddingInlineStart: 26,
+      'li::marker': {
+        color: mainColor,
+      },
+    };
+  };
+
+  const renderTask = (): CSSObject => {
+    return {
+      listStyle: 'none',
+      padding: '0',
+      '& > li': {
+        alignItems: 'center',
+        display: 'flex',
+        '& > label': {
+          flex: '0 0 auto',
+          marginRight: '0.5rem',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
+          userSelect: 'none',
+          marginTop: '9px',
+          alignSelf: 'flex-start',
+          '& > input': {
+            cursor: 'pointer',
+          },
+        },
+        '& > div': {
+          flex: '1 1 auto',
+          '& > p': {
+            marginBlockStart: '0.5em',
+            marginBlockEnd: '0.5em',
+          },
         },
       },
+    };
+  };
+
+  const fontFamily = 'Consolas,微软雅黑,霞鹭文楷';
+
+  return {
+    margin: 'auto',
+    fontFamily,
+    background: isDark ? '#1a1b1e' : '#fafafa',
+    '.ProseMirror': {
+      padding: '0 32px',
       '&:focus': {
         outline: 'none',
       },
-      mark: {
-        color: 'inherit',
+      '&>h1': renderHeader(1),
+      '&>h2': renderHeader(2),
+      '&>h3': renderHeader(3),
+      '&>h4': renderHeader(4),
+      '&>h5': renderHeader(5),
+      '&>h6': renderHeader(6),
+      blockquote: renderQuote(),
+      ol: renderList(),
+      ul: renderList(),
+      'ul[data-type="taskList"]': renderTask(),
+      hr: {
+        border: 'none',
+        borderBottom: `2px solid ${mainColor}`,
       },
-      'ul[data-type=taskList]': {
-        p: {
-          margin: '0 0 1px 0',
+      pre: {
+        margin: 0,
+        code: {
+          fontFamily,
         },
-        li: {
-          margin: '4px 0',
+      },
+      img: {
+        maxWidth: '100%',
+      },
+      svg: {
+        margin: '0 auto',
+        display: 'block',
+      },
+      '.ProseMirror-selectednode': {
+        border: '1px solid #bbb',
+        '.show': {
+          borderBottom: '1px solid #bbb',
+          background: '#eee',
         },
+      },
+      '.has-focus': {
+        border: `1px solid ${mainColor}`,
       },
       'p.is-empty.is-editor-empty': {
-        marginLeft: -4,
+        marginLeft: -5,
+        position: 'relative',
         '&::before': {
           color: isDark ? '#5c5f66' : '#adb5bd',
           content: 'attr(data-placeholder)',
-          float: 'left',
-          height: 0,
+          position: 'absolute',
+          lineHeight: '14px',
           pointerEvents: 'none',
           fontSize: 14,
+          top: 7,
+          left: 4,
         },
       },
     },
+    ...(isDark ? darkTheme() : lightTheme()),
   };
 };
 
@@ -79,7 +178,7 @@ export default function Editor(
   const { theme } = useStyles();
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ codeBlock: false }),
       Placeholder.configure({
         placeholder: props.placeholder,
       }),
@@ -105,6 +204,7 @@ export default function Editor(
       TaskItem.configure({
         nested: true,
       }),
+      CodeBlockRefractor,
     ],
     content: props.value,
     autofocus: !!props.autofocus,
@@ -135,12 +235,7 @@ export default function Editor(
       m={0}
       p={0}
       withBorder
-      sx={mainSx as Sx}
-      onClick={() => {
-        if (!editor?.isFocused) {
-          editor?.commands.focus();
-        }
-      }}
+      sx={editorStyle}
       style={{
         height: '510px',
         overflow: 'auto',
