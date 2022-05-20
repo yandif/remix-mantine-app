@@ -12,7 +12,7 @@ import { useForm } from '@mantine/form';
 import type { Tag } from '@prisma/client';
 import { forwardRef, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import type { ActionFunction, LinksFunction } from 'remix';
+import type { ActionFunction } from 'remix';
 import { json, redirect, useFetcher, useLoaderData } from 'remix';
 
 import EngineDemo from '~/components/Editor';
@@ -26,11 +26,6 @@ import {
   setSuccessMessage,
 } from '~/server/message/message.server';
 import { checkAuth } from '~/server/middleware/auth.server';
-import stylesHref from '~/styles/editor.css';
-
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: stylesHref }];
-};
 
 const useStyles = createStyles((theme) => {
   const isDark = theme.colorScheme === 'dark';

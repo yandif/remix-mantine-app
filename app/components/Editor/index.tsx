@@ -1,9 +1,9 @@
 import type { CSSObject, MantineTheme, PaperProps, Sx } from '@mantine/core';
 import { createStyles, Paper } from '@mantine/core';
+import { useFullscreen } from '@mantine/hooks';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
-import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
+import { Link } from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -16,8 +16,10 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import _ from 'lodash';
 import type { ReactNode } from 'react';
+import { Capture } from 'tabler-icons-react';
 
 import { CodeBlockRefractor } from './Plugin/CodeBlockRefractor';
+import { Image } from './Plugin/image';
 import { darkTheme, lightTheme } from './theme';
 
 const editorStyle: Sx = (theme: MantineTheme) => {
@@ -97,7 +99,13 @@ const editorStyle: Sx = (theme: MantineTheme) => {
   return {
     margin: 'auto',
     fontFamily,
-    background: isDark ? '#1a1b1e' : '#fafafa',
+    background: isDark ? theme.colors.dark[5] : theme.white,
+    '& *': {
+      wordBreak: 'break-all',
+      '&::selection': {
+        background: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)',
+      },
+    },
     '.ProseMirror': {
       padding: '0 32px',
       '&:focus': {
@@ -114,11 +122,15 @@ const editorStyle: Sx = (theme: MantineTheme) => {
       ul: renderList(),
       'ul[data-type="taskList"]': renderTask(),
       hr: {
-        border: 'none',
-        borderBottom: `2px solid ${mainColor}`,
+        border: 'none !important',
+        borderBottom: `2px solid ${mainColor} !important`,
+
+        '&.ProseMirror-selectednode': {
+          borderColor: '#bbb !important',
+        },
       },
       pre: {
-        margin: 0,
+        margin: '16px 0',
         code: {
           fontFamily,
         },
@@ -129,6 +141,13 @@ const editorStyle: Sx = (theme: MantineTheme) => {
       svg: {
         margin: '0 auto',
         display: 'block',
+      },
+      mark: {
+        backgroundColor: 'inherit',
+        color: mainColor,
+      },
+      a: {
+        textDecoration: 'none',
       },
       '.ProseMirror-selectednode': {
         border: '1px solid #bbb',
@@ -195,6 +214,7 @@ export default function Editor(
         types: ['heading', 'paragraph', 'image'],
       }),
       Link.configure({
+        autolink: false,
         openOnClick: false,
       }),
       Subscript,
@@ -228,21 +248,42 @@ export default function Editor(
     }
     return 'rgb(206, 212, 218)';
   })();
+  const { ref, toggle, fullscreen } = useFullscreen();
 
   return (
-    <Paper
-      radius={0}
-      m={0}
-      p={0}
-      withBorder
-      sx={editorStyle}
-      style={{
-        height: '510px',
-        overflow: 'auto',
-        cursor: 'text',
-        borderColor,
-      }}>
-      <EditorContent editor={editor} />
-    </Paper>
+    <div style={{ position: 'relative' }}>
+      <Capture
+        style={{
+          position: 'absolute',
+          zIndex: 1,
+          right: 16,
+          top: 16,
+          cursor: 'pointer',
+        }}
+        onClick={toggle}
+        size={16}
+        strokeWidth={2}
+      />
+      <Paper
+        ref={ref}
+        radius={0}
+        m={0}
+        p={0}
+        px={fullscreen ? '20%' : 0}
+        withBorder
+        sx={editorStyle}
+        style={{
+          height: '510px',
+          overflow: 'auto',
+          borderColor,
+        }}
+        onClick={() => {
+          if (!editor?.isFocused) {
+            editor?.commands.focus();
+          }
+        }}>
+        <EditorContent editor={editor} />
+      </Paper>
+    </div>
   );
 }
