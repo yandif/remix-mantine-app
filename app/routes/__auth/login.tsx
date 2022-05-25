@@ -24,13 +24,9 @@ export { CatchBoundary, ErrorBoundary } from '~/components/Remix';
 
 export const meta: MetaFunction = () => {
   return {
-    title: 'a',
-    description: 'a',
+    title: '登录',
+    description: 'Yandif应用登录',
   };
-};
-
-export const links: LinksFunction = () => {
-  return [{ rel: '', href: '' }];
 };
 
 export type LoaderData = {

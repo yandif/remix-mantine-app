@@ -3,10 +3,10 @@ import { Authenticator } from 'remix-auth';
 
 import { sessionStorage } from '~/server/auth/session.server';
 import { FormStrategy } from '~/server/auth/strategy.server';
-import { db } from '~/server/database/db.server';
 import { auth } from '~/utils';
 
-import { getUserByUserName } from '../models/account.server';
+import { GetAccountByUserName } from '../models/account.server';
+
 export const authenticator = new Authenticator<any>(sessionStorage);
 
 authenticator.use(
@@ -22,7 +22,7 @@ authenticator.use(
       themeColor,
     });
 
-    const findUser = await getUserByUserName(username);
+    const findUser = await GetAccountByUserName(username);
 
     if (!findUser) {
       // 用户名不存在

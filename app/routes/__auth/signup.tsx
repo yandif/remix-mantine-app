@@ -10,13 +10,52 @@ import {
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import type { ActionFunction, LoaderFunction } from 'remix';
+import type { ActionFunction, LoaderFunction, MetaFunction } from 'remix';
 import { Form, json, Link, useActionData, useNavigate } from 'remix';
 
 import { authenticator } from '~/server/auth/auth.server';
-import { db } from '~/server/database/db.server';
+import {
+  CreateAccount,
+  GetAccountByUserName,
+} from '~/server/models/account.server';
 import useThemeStore from '~/stores/theme';
-import { auth } from '~/utils';
+
+export const meta: MetaFunction = () => {
+  return {
+    title: '注册',
+    description: 'Yandif应用注册',
+  };
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/admin/dashboard',
+  });
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const themeColor = form.get('themeColor');
+  const username = form.get('username') as string;
+  const password = form.get('password') as string;
+  const data = { username, password, rePassword: password };
+
+  if (username) {
+    const findUser = await GetAccountByUserName(username);
+
+    if (findUser) {
+      return json({ failed: true, themeColor, data, errorData: { username } });
+    }
+
+    await CreateAccount;
+
+    return json({
+      signupSuccess: true,
+      data,
+    });
+  }
+  return json({});
+};
 
 export default function Signup() {
   const actionData = useActionData();
@@ -113,51 +152,3 @@ export default function Signup() {
     </Paper>
   );
 }
-
-export const action: ActionFunction = async ({ request }) => {
-  const form = await request.formData();
-  const themeColor = form.get('themeColor');
-  const username = form.get('username') as string;
-  const password = form.get('password') as string;
-  const data = {
-    username,
-    password,
-    rePassword: password,
-  };
-  if (username) {
-    const findUser = await db.account.findFirst({
-      where: {
-        username,
-      },
-    });
-
-    if (findUser) {
-      return json({
-        failed: true,
-        themeColor,
-        data,
-        errorData: { username },
-      });
-    }
-
-    const md5pwd = auth.makePassword(password);
-
-    await db.account.create({
-      data: {
-        username,
-        passwordHash: md5pwd,
-      },
-    });
-    return json({
-      signupSuccess: true,
-      data,
-    });
-  }
-  return json({});
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
-    successRedirect: '/admin/dashboard',
-  });
-};
