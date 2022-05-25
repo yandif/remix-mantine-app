@@ -1,4 +1,12 @@
-import { Center, createStyles, Navbar, ScrollArea, Title } from '@mantine/core';
+import {
+  Center,
+  createStyles,
+  Navbar,
+  ScrollArea,
+  Title,
+  UnstyledButton,
+} from '@mantine/core';
+import { Link } from 'remix';
 
 import useAdminStore from '~/stores/admin';
 
@@ -33,7 +41,9 @@ export default function SideBar({ navbarWidth }: { navbarWidth: number }) {
       <Navbar width={{ base: navbarWidth }} className={classes.navbar}>
         <Navbar.Section className={classes.header}>
           <Center>
-            <Title order={4}>{sizeName}</Title>
+            <UnstyledButton component={Link} to="/admin/dashboard">
+              <Title order={4}>{sizeName}</Title>
+            </UnstyledButton>
           </Center>
         </Navbar.Section>
 

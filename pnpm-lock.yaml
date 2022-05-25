@@ -658,7 +658,7 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0
       '@types/react': '*'
-      react: '>=16.8.0 || 17.0.2'
+      react: '>=16.8.0 || 17.0.2 || 17.0.2'
     peerDependenciesMeta:
       '@babel/core':
         optional: true

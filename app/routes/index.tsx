@@ -6,6 +6,8 @@ const Index: FC = () => {
     <div>
       <h1>Home</h1>
       <Link to="admin">管理端</Link>
+      <br />
+      <Link to="blog">博客</Link>
     </div>
   );
 };

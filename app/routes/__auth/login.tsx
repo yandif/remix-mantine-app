@@ -9,11 +9,56 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useRef } from 'react';
-import type { ActionFunction, LoaderFunction } from 'remix';
+import type {
+  ActionFunction,
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from 'remix';
 import { Form, json, Link, useActionData } from 'remix';
 
 import { authenticator } from '~/server/auth/auth.server';
 import useThemeStore from '~/stores/theme';
+
+export { CatchBoundary, ErrorBoundary } from '~/components/Remix';
+
+export const meta: MetaFunction = () => {
+  return {
+    title: 'a',
+    description: 'a',
+  };
+};
+
+export const links: LinksFunction = () => {
+  return [{ rel: '', href: '' }];
+};
+
+export type LoaderData = {
+  ok: boolean;
+  message?: string;
+  data?: any;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  throw new Error('错误');
+  return json({}, { status: 404 });
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/admin/dashboard',
+  });
+};
+
+export type actionData = {
+  ok: boolean;
+  message?: string;
+  data?: any;
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const user = await authenticator.authenticate('user-pass', request, {
+    successRedirect: '/admin/dashboard',
+  });
+  return json(user);
+};
 
 export default function Login() {
   const actionData = useActionData();
@@ -94,16 +139,3 @@ export default function Login() {
     </Paper>
   );
 }
-
-export const action: ActionFunction = async ({ request }) => {
-  const user = await authenticator.authenticate('user-pass', request, {
-    successRedirect: '/admin/dashboard',
-  });
-  return json(user);
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
-    successRedirect: '/admin/dashboard',
-  });
-};

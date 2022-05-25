@@ -5,6 +5,8 @@ import { sessionStorage } from '~/server/auth/session.server';
 import { FormStrategy } from '~/server/auth/strategy.server';
 import { db } from '~/server/database/db.server';
 import { auth } from '~/utils';
+
+import { getUserByUserName } from '../models/account.server';
 export const authenticator = new Authenticator<any>(sessionStorage);
 
 authenticator.use(
@@ -20,11 +22,7 @@ authenticator.use(
       themeColor,
     });
 
-    const findUser = await db.account.findUnique({
-      where: {
-        username,
-      },
-    });
+    const findUser = await getUserByUserName(username);
 
     if (!findUser) {
       // 用户名不存在
