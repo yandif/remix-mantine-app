@@ -2,7 +2,6 @@ import { Box, Title } from '@mantine/core';
 import { useEffect } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import type { LinksFunction, LoaderFunction, MetaFunction } from 'remix';
-import { useCatch } from 'remix';
 import {
   json,
   Links,
@@ -20,7 +19,18 @@ import stylesHref from '~/styles/index.css';
 
 import ErrorMessage from './components/ErrorMessage';
 import MantineProvider from './components/MantineProvider';
-import NotFoundTitle from './components/NotFound';
+
+export { CatchBoundary } from './components/Remix';
+
+export const meta: MetaFunction = () => ({
+  charset: 'utf-8',
+  title: 'Yandif',
+  viewport: 'width=device-width,initial-scale=1',
+});
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: stylesHref }];
+};
 
 type LoaderData = {
   toastMessage: ToastMessage | null;
@@ -73,40 +83,6 @@ export default function App() {
       </head>
       <body>
         <Outlet />
-        <Toaster />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
-  );
-}
-
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: stylesHref }];
-};
-
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  // title: 'Remix 应用',
-  viewport: 'width=device-width,initial-scale=1',
-});
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  return (
-    <html lang="en">
-      <head>
-        <Meta />
-        <Links />
-        <title>{`${caught.status} ${caught.statusText}`}</title>
-      </head>
-      <body>
-        <MantineProvider>
-          <NotFoundTitle to="/"></NotFoundTitle>
-        </MantineProvider>
-
         <Toaster />
         <ScrollRestoration />
         <Scripts />
