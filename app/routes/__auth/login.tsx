@@ -40,8 +40,6 @@ export type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  throw new Error('错误');
-  return json({}, { status: 404 });
   return await authenticator.isAuthenticated(request, {
     successRedirect: '/admin/dashboard',
   });

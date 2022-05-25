@@ -10,6 +10,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
   useLoaderData,
 } from 'remix';
 
@@ -19,8 +20,7 @@ import stylesHref from '~/styles/index.css';
 
 import ErrorMessage from './components/ErrorMessage';
 import MantineProvider from './components/MantineProvider';
-
-export { CatchBoundary } from './components/Remix';
+import NotFoundTitle from './components/NotFound';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -83,6 +83,30 @@ export default function App() {
       </head>
       <body>
         <Outlet />
+        <Toaster />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <html lang="en">
+      <head>
+        <Meta />
+        <Links />
+        <title>{`${caught.status} ${caught.statusText}`}</title>
+      </head>
+      <body>
+        <MantineProvider>
+          <NotFoundTitle to="/"></NotFoundTitle>
+        </MantineProvider>
+
         <Toaster />
         <ScrollRestoration />
         <Scripts />
