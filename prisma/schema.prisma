@@ -31,7 +31,7 @@ model Article {
   tag       Tag[]
   author    Account @relation(fields: [accountId], references: [id])
   accountId Int
-  cover     Image   @relation(fields: [imageId], references: [id])
+  cover     Image?  @relation(fields: [imageId], references: [id])
   imageId   Int
 }
 

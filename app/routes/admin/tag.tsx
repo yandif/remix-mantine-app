@@ -33,10 +33,10 @@ import {
 } from '~/server/models/tag.server';
 
 export { CatchBoundary, ErrorBoundary } from '~/components/Remix';
-
+const title = '标签管理';
 export const meta: MetaFunction = () => {
   return {
-    title: '标签管理',
+    title,
     description: '新建、编辑、删除标签',
   };
 };
@@ -153,7 +153,7 @@ const useStyles = createStyles((theme) => {
 });
 
 export default function TagList() {
-  useTitle('标签列表');
+  useTitle(title);
 
   const fetcher = useFetcher();
   const { classes } = useStyles();

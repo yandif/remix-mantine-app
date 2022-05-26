@@ -38,7 +38,7 @@ const useStyles = createStyles((theme) => {
 export default function Header() {
   const { classes } = useStyles();
   const { headerTitle, user } = useAdminStore();
-  useDocumentTitle(headerTitle);
+
   return (
     <Group position="apart" className={classes.header}>
       <Title order={5}>{headerTitle}</Title>

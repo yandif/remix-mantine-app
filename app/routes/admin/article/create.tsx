@@ -70,9 +70,9 @@ export default function CreateArticle() {
       title: (value) => (value?.length === 0 ? '请输入文章标题' : null),
       content: (value) =>
         value?.length === 0 || value === '<p></p>' ? '请输入文章内容' : null,
-      cover: (value) => {
-        return !value?.id ? '请上传封面' : null;
-      },
+      // cover: (value) => {
+      //   return !value?.id ? '请上传封面' : null;
+      // },
     },
   });
 
@@ -262,11 +262,7 @@ export default function CreateArticle() {
           </fetcher.Form>
         </Container>
         <Container mt={16} className={classes.main}>
-          <InputWrapper
-            pb="md"
-            required
-            label="封面"
-            {...form.getInputProps('cover')}>
+          <InputWrapper pb="md" label="封面" {...form.getInputProps('cover')}>
             <Dropzone
               sx={(theme) => {
                 const error = form.getInputProps('cover').error;
@@ -310,12 +306,12 @@ export const action: ActionFunction = async ({ request }) => {
   const content = formData.get('content') as string;
   const cover = Number(formData.get('cover') as string);
 
-  if (title && content && cover) {
+  if (title && content) {
     const article = await db.article.create({
       data: {
         title,
         content,
-        cover: { connect: { id: cover } },
+        cover: cover ? { id: '0' } : { connect: { id: cover } },
         tag: { connect: tag.map((v) => ({ id: Number(v) })) },
         author: { connect: { id: user.id } },
       },
@@ -326,7 +322,7 @@ export const action: ActionFunction = async ({ request }) => {
       headers: { 'Set-Cookie': await commitSession(session) },
     });
   } else {
-    setErrorMessage(session, '请确保文章有标题，内容，封面有值!');
+    setErrorMessage(session, '请确保文章有标题，内容有值!');
     return json(
       { ok: false },
       {
