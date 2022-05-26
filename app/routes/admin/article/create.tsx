@@ -311,7 +311,7 @@ export const action: ActionFunction = async ({ request }) => {
       data: {
         title,
         content,
-        cover: cover ? { id: '0' } : { connect: { id: cover } },
+        cover: cover ? { connect: { id: cover } } : undefined,
         tag: { connect: tag.map((v) => ({ id: Number(v) })) },
         author: { connect: { id: user.id } },
       },

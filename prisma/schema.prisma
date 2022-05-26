@@ -29,10 +29,10 @@ model Article {
   state     ArticleState @default(DRAFT)
 
   tag       Tag[]
-  author    Account @relation(fields: [accountId], references: [id])
   accountId Int
+  author    Account @relation(fields: [accountId], references: [id])
+  imageId   Int?
   cover     Image?  @relation(fields: [imageId], references: [id])
-  imageId   Int
 }
 
 model Tag {
@@ -43,8 +43,8 @@ model Tag {
   description String   @db.Text
 
   article   Article[]
-  author    Account   @relation(fields: [accountId], references: [id])
   accountId Int
+  author    Account   @relation(fields: [accountId], references: [id])
 }
 
 model Image {
@@ -54,8 +54,9 @@ model Image {
   name      String
 
   article   Article[]
-  author    Account   @relation(fields: [accountId], references: [id])
   accountId Int
+  author    Account   @relation(fields: [accountId], references: [id])
+
 }
 
 enum ArticleState {
