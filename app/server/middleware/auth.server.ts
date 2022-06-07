@@ -1,23 +1,12 @@
-import { redirect } from 'remix';
-
 import { authenticator } from '~/server/auth/auth.server';
-import {
-  commitSession,
-  getSession,
-  setErrorMessage,
-} from '~/server/message/message.server';
+import { Message } from '~/server/middleware/message.server';
 
 export const checkAuth = async (request: Request) => {
-  const session = await getSession(request.headers.get('cookie'));
-
+  const message = new Message(request);
   const user = await authenticator.isAuthenticated(request);
 
   if (!user) {
-    setErrorMessage(session, '请重新登录!');
-
-    throw redirect('/login', {
-      headers: { 'Set-Cookie': await commitSession(session) },
-    });
+    await message.error('请重新登录!', { redirect: '/login' });
   }
   return user;
 };

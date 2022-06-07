@@ -1,6 +1,6 @@
 import type { Account } from '@prisma/client';
 
-import { auth } from '~/utils';
+import { auth } from '~/server/utils/index.server';
 
 import { db } from '../database/db.server';
 

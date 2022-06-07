@@ -3,7 +3,7 @@ import { Authenticator } from 'remix-auth';
 
 import { sessionStorage } from '~/server/auth/session.server';
 import { FormStrategy } from '~/server/auth/strategy.server';
-import { auth } from '~/utils';
+import { auth } from '~/server/utils/index.server';
 
 import { GetAccountByUserName } from '../models/account.server';
 

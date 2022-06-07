@@ -16,11 +16,11 @@ import {
 
 import type { ToastMessage } from '~/server/message/message.server';
 import { commitSession, getSession } from '~/server/message/message.server';
-import stylesHref from '~/styles/index.css';
+import stylesHref from '~/web/styles/index.css';
 
-import ErrorMessage from './components/ErrorMessage';
-import MantineProvider from './components/MantineProvider';
-import NotFoundTitle from './components/NotFound';
+import ErrorMessage from './web/components/ErrorMessage';
+import MantineProvider from './web/components/MantineProvider';
+import NotFoundTitle from './web/components/NotFound';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
