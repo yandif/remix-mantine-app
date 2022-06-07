@@ -11,6 +11,7 @@ import {
   setSuccessMessage,
 } from '~/server/message/message.server';
 import { checkAuth } from '~/server/middleware/auth.server';
+import { Message } from '~/server/middleware/message.server';
 import { CreateTag } from '~/server/models/tag.server';
 
 export const tagRoute = '/admin/tag';
@@ -24,19 +25,14 @@ export const meta: MetaFunction = () => {
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await checkAuth(request);
-  const session = await getSession(request.headers.get('cookie'));
+  const message = new Message(request);
+
   const formData = await request.formData();
   const name = formData.get('name') as string;
   const description = (formData.get('description') as string) || '';
 
   if (!name) {
-    setErrorMessage(session, '请确保标签的名称有值!');
-    return json(
-      { ok: false },
-      {
-        headers: { 'Set-Cookie': await commitSession(session) },
-      },
-    );
+    await message.error('请确保标签的名称有值!');
   }
 
   await CreateTag({ name, description, userId: user.id });

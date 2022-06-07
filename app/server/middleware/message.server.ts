@@ -4,6 +4,7 @@ import {
   commitSession,
   getSession,
   setErrorMessage,
+  setSuccessMessage,
 } from '~/server/message/message.server';
 
 type MessageOptions = { redirect?: string; data?: any };
@@ -12,8 +13,26 @@ export class Message {
   constructor(request: Request) {
     this.request = request;
   }
+  async success(message = '成功', options: MessageOptions = {}) {
+    const session = await getSession(this.request.headers.get('cookie'));
 
-  async error(message = '服务器出现错误', options: MessageOptions = {}) {
+    if (options.redirect) {
+      setSuccessMessage(session, message);
+      throw redirect(options.redirect, {
+        headers: { 'Set-Cookie': await commitSession(session) },
+      });
+    }
+
+    setSuccessMessage(session, message);
+    throw json(
+      { ok: true, data: options.data },
+      {
+        headers: { 'Set-Cookie': await commitSession(session) },
+      },
+    );
+  }
+
+  async error(message = '失败', options: MessageOptions = {}) {
     const session = await getSession(this.request.headers.get('cookie'));
 
     if (options.redirect) {
